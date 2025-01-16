@@ -3,6 +3,9 @@
 name: "Workflow call: Build Images"
 
 on:
+  push:
+   branches:
+     - main
   workflow_call:
     inputs:
       appsToBuild:
