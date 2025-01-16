@@ -232,12 +232,11 @@ jobs:
       fail-fast: false
     steps:
       - name: Get Secrets
-        uses: 1password/load-secrets-action@v2
+        uses: bitwarden/sm-action@v2
         with:
-          export-env: true
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.ONEPASS_SA_TOKEN }}
-          DISCORD_WEBHOOK: op://Kubernetes/discord/DISCORD_WEBHOOK_URL
+          access_token: ${{ secrets.BW_ACCESS_TOKEN }}
+          secrets: |
+            a2a728fb-6eb8-4b68-9118-b267015ca8c3 > DISCORD_WEBHOOK
 
       - name: Lowercase repository owner
         shell: bash

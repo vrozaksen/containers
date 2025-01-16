@@ -1,8 +1,8 @@
 FROM docker.io/library/ubuntu:24.04
 
-LABEL dev.joryirving.image.target_platform=$TARGETPLATFORM
-LABEL dev.joryirving.image.target_architecture=$TARGETARCH
-LABEL dev.joryirving.image.target_os=$TARGETOS
+LABEL dev.vrozaksen.image.target_platform=$TARGETPLATFORM
+LABEL dev.vrozaksen.image.target_architecture=$TARGETARCH
+LABEL dev.vrozaksen.image.target_os=$TARGETOS
 
 ARG TARGETOS
 ARG TARGETARCH
@@ -21,7 +21,7 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR="/config/Library/Application Support" \
     PLEX_MEDIA_SERVER_HOME="/usr/lib/plexmediaserver" \
     PLEX_MEDIA_SERVER_INFO_VENDOR="Docker" \
-    PLEX_MEDIA_SERVER_INFO_DEVICE="Docker Container (joryirving)"
+    PLEX_MEDIA_SERVER_INFO_DEVICE="Docker Container (vrozaksen)"
 
 USER root
 WORKDIR /app

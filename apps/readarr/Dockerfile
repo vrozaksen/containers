@@ -7,9 +7,9 @@ ARG TARGETPLATFORM
 ARG TARGETARCH
 ARG TARGETOS
 
-LABEL dev.joryirving.image.target_platform=$TARGETPLATFORM
-LABEL dev.joryirving.image.target_architecture=$TARGETARCH
-LABEL dev.joryirving.image.target_os=$TARGETOS
+LABEL dev.vrozaksen.image.target_platform=$TARGETPLATFORM
+LABEL dev.vrozaksen.image.target_architecture=$TARGETARCH
+LABEL dev.vrozaksen.image.target_os=$TARGETOS
 LABEL org.opencontainers.image.source="https://github.com/Readarr/Readarr"
 
 ENV UMASK="0002" \
@@ -47,7 +47,7 @@ RUN \
     && mkdir -p /app/bin \
     && curl -fsSL "https://readarr.servarr.com/v1/update/${READARR__UPDATE__BRANCH}/updatefile?version=${VERSION}&os=linuxmusl&runtime=netcore&arch=${ARCH}" \
         | tar xzf - -C /app/bin --strip-components=1 \
-    && printf "UpdateMethod=docker\nBranch=%s\nPackageVersion=%s\nPackageAuthor=[joryirving](https://github.com/joryirving)\n" "${READARR__UPDATE__BRANCH}" "${VERSION}" > /app/package_info \
+    && printf "UpdateMethod=docker\nBranch=%s\nPackageVersion=%s\nPackageAuthor=[vrozaksen](https://github.com/vrozaksen)\n" "${READARR__UPDATE__BRANCH}" "${VERSION}" > /app/package_info \
     && chown -R root:root /app && chmod -R 755 /app \
     && rm -rf /tmp/* /app/bin/Readarr.Update
 

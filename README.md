@@ -13,13 +13,13 @@ _An opinionated collection of container images_
 
 <div align="center">
 
-![GitHub Repo stars](https://img.shields.io/github/stars/joryirving/containers?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/joryirving/containers?style=for-the-badge)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/joryirving/containers/scheduled-release.yaml?style=for-the-badge&label=Scheduled%20Release)
+![GitHub Repo stars](https://img.shields.io/github/stars/vrozaksen/containers?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/vrozaksen/containers?style=for-the-badge)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/vrozaksen/containers/scheduled-release.yaml?style=for-the-badge&label=Scheduled%20Release)
 
 </div>
 
-Welcome to container images, if looking for a container start by [browsing the GitHub Packages page for this repo's packages](https://github.com/joryirving?tab=packages&repo_name=containers). Please also check out the inspiration repo from [onedr0p](https://github.com/onedr0p/containers).
+Welcome to container images, if looking for a container start by [browsing the GitHub Packages page for this repo's packages](https://github.com/vrozaksen?tab=packages&repo_name=containers). Please also check out the inspiration repo from [onedr0p](https://github.com/onedr0p/containers).
 
 ## Mission statement
 
@@ -40,7 +40,7 @@ networks:
     external: true
 services:
   sonarr:
-    image: ghcr.io/joryirving/sonarr:3.0.8.1507
+    image: ghcr.io/vrozaksen/sonarr:3.0.8.1507
     container_name: sonarr
     user: 65534:65534
     # ...
@@ -76,10 +76,10 @@ We do take a similar approach but instead of appending a `-ls69` or `-r420` pref
 
 | Container                                          | Immutable |
 |----------------------------------------------------|-----------|
-| `ghcr.io/joryirving/sonarr:rolling`                   | ❌         |
-| `ghcr.io/joryirving/sonarr:3.0.8.1507`                | ❌         |
-| `ghcr.io/joryirving/sonarr:rolling@sha256:8053...`    | ✅         |
-| `ghcr.io/joryirving/sonarr:3.0.8.1507@sha256:8053...` | ✅         |
+| `ghcr.io/vrozaksen/sonarr:rolling`                   | ❌         |
+| `ghcr.io/vrozaksen/sonarr:3.0.8.1507`                | ❌         |
+| `ghcr.io/vrozaksen/sonarr:rolling@sha256:8053...`    | ✅         |
+| `ghcr.io/vrozaksen/sonarr:3.0.8.1507@sha256:8053...` | ✅         |
 
 _If pinning an image to the sha256 digest, tools like [Renovate](https://github.com/renovatebot/renovate) support updating the container on a digest or application version change._
 
@@ -107,32 +107,32 @@ Each Image will be built with a `rolling` tag, along with tags specific to it's 
 
 Container | Channel | Image
 --- | --- | ---
-[actions-runner](https://github.com/joryirving/containers/pkgs/container/actions-runner) | stable | ghcr.io/joryirving/actions-runner
-[bazarr](https://github.com/joryirving/containers/pkgs/container/bazarr) | stable | ghcr.io/joryirving/bazarr
-[caddy-scratch](https://github.com/joryirving/containers/pkgs/container/caddy-scratch) | stable | ghcr.io/joryirving/caddy-scratch
-[free-game-notifier](https://github.com/joryirving/containers/pkgs/container/free-game-notifier) | stable | ghcr.io/joryirving/free-game-notifier
-[home-assistant](https://github.com/joryirving/containers/pkgs/container/home-assistant) | stable | ghcr.io/joryirving/home-assistant
-[it-tools](https://github.com/joryirving/containers/pkgs/container/it-tools) | stable | ghcr.io/joryirving/it-tools
-[opentofu-runner](https://github.com/joryirving/containers/pkgs/container/opentofu-runner) | stable | ghcr.io/joryirving/opentofu-runner
-[plex](https://github.com/joryirving/containers/pkgs/container/plex) | stable | ghcr.io/joryirving/plex
-[plex-beta](https://github.com/joryirving/containers/pkgs/container/plex-beta) | beta | ghcr.io/joryirving/plex-beta
-[prowlarr](https://github.com/joryirving/containers/pkgs/container/prowlarr) | master | ghcr.io/joryirving/prowlarr
-[prowlarr-develop](https://github.com/joryirving/containers/pkgs/container/prowlarr-develop) | develop | ghcr.io/joryirving/prowlarr-develop
-[prowlarr-nightly](https://github.com/joryirving/containers/pkgs/container/prowlarr-nightly) | nightly | ghcr.io/joryirving/prowlarr-nightly
-[qbittorrent](https://github.com/joryirving/containers/pkgs/container/qbittorrent) | stable | ghcr.io/joryirving/qbittorrent
-[qbittorrent-beta](https://github.com/joryirving/containers/pkgs/container/qbittorrent-beta) | beta | ghcr.io/joryirving/qbittorrent-beta
-[radarr](https://github.com/joryirving/containers/pkgs/container/radarr) | master | ghcr.io/joryirving/radarr
-[radarr-develop](https://github.com/joryirving/containers/pkgs/container/radarr-develop) | develop | ghcr.io/joryirving/radarr-develop
-[radarr-nightly](https://github.com/joryirving/containers/pkgs/container/radarr-nightly) | nightly | ghcr.io/joryirving/radarr-nightly
-[readarr-develop](https://github.com/joryirving/containers/pkgs/container/readarr-develop) | develop | ghcr.io/joryirving/readarr-develop
-[readarr-nightly](https://github.com/joryirving/containers/pkgs/container/readarr-nightly) | nightly | ghcr.io/joryirving/readarr-nightly
-[redlib](https://github.com/joryirving/containers/pkgs/container/redlib) | stable | ghcr.io/joryirving/redlib
-[sabnzbd](https://github.com/joryirving/containers/pkgs/container/sabnzbd) | stable | ghcr.io/joryirving/sabnzbd
-[smartctl_exporter](https://github.com/joryirving/containers/pkgs/container/smartctl_exporter) | stable | ghcr.io/joryirving/smartctl_exporter
-[sonarr](https://github.com/joryirving/containers/pkgs/container/sonarr) | main | ghcr.io/joryirving/sonarr
-[sonarr-develop](https://github.com/joryirving/containers/pkgs/container/sonarr-develop) | develop | ghcr.io/joryirving/sonarr-develop
-[tautulli](https://github.com/joryirving/containers/pkgs/container/tautulli) | master | ghcr.io/joryirving/tautulli
-[volsync](https://github.com/joryirving/containers/pkgs/container/volsync) | stable | ghcr.io/joryirving/volsync
+[actions-runner](https://github.com/vrozaksen/containers/pkgs/container/actions-runner) | stable | ghcr.io/vrozaksen/actions-runner
+[bazarr](https://github.com/vrozaksen/containers/pkgs/container/bazarr) | stable | ghcr.io/vrozaksen/bazarr
+[caddy-scratch](https://github.com/vrozaksen/containers/pkgs/container/caddy-scratch) | stable | ghcr.io/vrozaksen/caddy-scratch
+[free-game-notifier](https://github.com/vrozaksen/containers/pkgs/container/free-game-notifier) | stable | ghcr.io/vrozaksen/free-game-notifier
+[home-assistant](https://github.com/vrozaksen/containers/pkgs/container/home-assistant) | stable | ghcr.io/vrozaksen/home-assistant
+[it-tools](https://github.com/vrozaksen/containers/pkgs/container/it-tools) | stable | ghcr.io/vrozaksen/it-tools
+[opentofu-runner](https://github.com/vrozaksen/containers/pkgs/container/opentofu-runner) | stable | ghcr.io/vrozaksen/opentofu-runner
+[plex](https://github.com/vrozaksen/containers/pkgs/container/plex) | stable | ghcr.io/vrozaksen/plex
+[plex-beta](https://github.com/vrozaksen/containers/pkgs/container/plex-beta) | beta | ghcr.io/vrozaksen/plex-beta
+[prowlarr](https://github.com/vrozaksen/containers/pkgs/container/prowlarr) | master | ghcr.io/vrozaksen/prowlarr
+[prowlarr-develop](https://github.com/vrozaksen/containers/pkgs/container/prowlarr-develop) | develop | ghcr.io/vrozaksen/prowlarr-develop
+[prowlarr-nightly](https://github.com/vrozaksen/containers/pkgs/container/prowlarr-nightly) | nightly | ghcr.io/vrozaksen/prowlarr-nightly
+[qbittorrent](https://github.com/vrozaksen/containers/pkgs/container/qbittorrent) | stable | ghcr.io/vrozaksen/qbittorrent
+[qbittorrent-beta](https://github.com/vrozaksen/containers/pkgs/container/qbittorrent-beta) | beta | ghcr.io/vrozaksen/qbittorrent-beta
+[radarr](https://github.com/vrozaksen/containers/pkgs/container/radarr) | master | ghcr.io/vrozaksen/radarr
+[radarr-develop](https://github.com/vrozaksen/containers/pkgs/container/radarr-develop) | develop | ghcr.io/vrozaksen/radarr-develop
+[radarr-nightly](https://github.com/vrozaksen/containers/pkgs/container/radarr-nightly) | nightly | ghcr.io/vrozaksen/radarr-nightly
+[readarr-develop](https://github.com/vrozaksen/containers/pkgs/container/readarr-develop) | develop | ghcr.io/vrozaksen/readarr-develop
+[readarr-nightly](https://github.com/vrozaksen/containers/pkgs/container/readarr-nightly) | nightly | ghcr.io/vrozaksen/readarr-nightly
+[redlib](https://github.com/vrozaksen/containers/pkgs/container/redlib) | stable | ghcr.io/vrozaksen/redlib
+[sabnzbd](https://github.com/vrozaksen/containers/pkgs/container/sabnzbd) | stable | ghcr.io/vrozaksen/sabnzbd
+[smartctl_exporter](https://github.com/vrozaksen/containers/pkgs/container/smartctl_exporter) | stable | ghcr.io/vrozaksen/smartctl_exporter
+[sonarr](https://github.com/vrozaksen/containers/pkgs/container/sonarr) | main | ghcr.io/vrozaksen/sonarr
+[sonarr-develop](https://github.com/vrozaksen/containers/pkgs/container/sonarr-develop) | develop | ghcr.io/vrozaksen/sonarr-develop
+[tautulli](https://github.com/vrozaksen/containers/pkgs/container/tautulli) | master | ghcr.io/vrozaksen/tautulli
+[volsync](https://github.com/vrozaksen/containers/pkgs/container/volsync) | stable | ghcr.io/vrozaksen/volsync
 
 
 ## Deprecations

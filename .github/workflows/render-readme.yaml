@@ -14,18 +14,13 @@ jobs:
     name: Render README
     runs-on: ubuntu-latest
     steps:
-      - name: Configure 1password
-        uses: 1password/load-secrets-action/configure@v2
-        with:
-          service-account-token: ${{ secrets.ONEPASS_SA_TOKEN }}
-
       - name: Get Secrets
-        uses: 1password/load-secrets-action@v2
+        uses: bitwarden/sm-action@v2
         with:
-          export-env: true
-        env:
-          BOT_APP_ID: op://Kubernetes/github-bot/BOT_APP_ID
-          BOT_APP_PRIVATE_KEY: op://Kubernetes/github-bot/BOT_APP_PRIVATE_KEY
+          access_token: ${{ secrets.BW_ACCESS_TOKEN }}
+          secrets: |
+            a1ebf68f-7c5c-4c55-a84f-b25500fe34e7 > BOT_APP_ID
+            e04c3c7c-5f88-4261-88de-b25500fed32b > BOT_APP_PRIVATE_KEY
 
       - name: Generate Token
         uses: actions/create-github-app-token@v1
