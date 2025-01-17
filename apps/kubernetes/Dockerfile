@@ -1,4 +1,4 @@
-FROM ghcr.io/vrozaksen/alpine:rolling@sha256:36eada10cae882bb8c8dfeea701cb8740210cb556e0931d777467c776af3b54a
+FROM docker.io/library/alpine:rolling@sha256:36eada10cae882bb8c8dfeea701cb8740210cb556e0931d777467c776af3b54a
 
 ARG TARGETPLATFORM
 ARG VERSION

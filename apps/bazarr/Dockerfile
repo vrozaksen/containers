@@ -62,7 +62,7 @@ RUN \
     rm -rf /app/bin/bin \
     && \
     printf "UpdateMethod=docker\nBranch=master\nPackageVersion=%s\nPackageAuthor=[vrozaksen](https://github.com/vrozaksen)\n" "${VERSION}" > /app/package_info \
-    && pip install --no-cache-dir --find-links https://wheel-index.linuxserver.io/alpine-3.20/ \
+    && pip install --no-cache-dir --find-links https://wheel-index.linuxserver.io/alpine-3.21/ \
         --requirement /app/bin/requirements.txt \
         --requirement /app/bin/postgres-requirements.txt \
     && chown -R root:root /app && chmod -R 755 /app \

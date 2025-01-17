@@ -22,7 +22,7 @@ USER root
 RUN \
     apt-get update && apt-get upgrade -y \
     && \
-    apt-get install -y --no-install-recommends \
+    apt-get install -y --no-install-recommends --no-install-suggests \
         ca-certificates \
         gcc \
         jo \
