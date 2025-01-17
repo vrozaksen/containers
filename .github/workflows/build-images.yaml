@@ -1,6 +1,6 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: "Image Build"
+name: "Workflow call: Build Images"
 
 on:
   workflow_call:
@@ -25,7 +25,7 @@ on:
         required: false
         default: true
         type: boolean
-        description: Force rebuild
+        description: "Rebuild images regardless of whether version has changed"
 
 jobs:
   prepare:
@@ -39,25 +39,8 @@ jobs:
         shell: bash
         run: echo "LOWERCASE_REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
 
-      - name: Get Secrets
-        uses: bitwarden/sm-action@v2
-        with:
-          access_token: ${{ secrets.BW_ACCESS_TOKEN }}
-          secrets: |
-            a1ebf68f-7c5c-4c55-a84f-b25500fe34e7 > BOT_APP_ID
-            e04c3c7c-5f88-4261-88de-b25500fed32b > BOT_APP_PRIVATE_KEY
-
-      - name: Generate Token
-        uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: "${{ env.BOT_APP_ID }}"
-          private-key: "${{ env.BOT_APP_PRIVATE_KEY }}"
-
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          token: "${{ steps.app-token.outputs.token }}"
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -72,7 +55,7 @@ jobs:
       - name: Prepare Matrices
         id: prepare-matrices
         env:
-          TOKEN: ${{ steps.app-token.outputs.token }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           if [[ -z "${{ inputs.appsToBuild }}" ]]; then
@@ -142,25 +125,10 @@ jobs:
           echo "${{ matrix.image.name }}" | grep -E "[a-zA-Z0-9_\.\-]+" || "Image Name is invalid"
           echo "${{ matrix.image.version }}" | grep -E "[a-zA-Z0-9_\.\-]+" || "Image Version is invalid"
 
-      - name: Get Secrets
-        uses: bitwarden/sm-action@v2
-        with:
-          access_token: ${{ secrets.BW_ACCESS_TOKEN }}
-          secrets: |
-            a1ebf68f-7c5c-4c55-a84f-b25500fe34e7 > BOT_APP_ID
-            e04c3c7c-5f88-4261-88de-b25500fed32b > BOT_APP_PRIVATE_KEY
-
-      - name: Generate Token
-        uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: "${{ env.BOT_APP_ID }}"
-          private-key: "${{ env.BOT_APP_PRIVATE_KEY }}"
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: "${{ steps.app-token.outputs.token }}"
+          fetch-depth: 1
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -170,7 +138,7 @@ jobs:
         with:
           registry: ghcr.io
           username: "${{ github.actor }}"
-          password: "${{ steps.app-token.outputs.token }}"
+          password: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Setup Goss
         if: ${{ matrix.image.tests_enabled }}
@@ -267,15 +235,6 @@ jobs:
           access_token: ${{ secrets.BW_ACCESS_TOKEN }}
           secrets: |
             a2a728fb-6eb8-4b68-9118-b267015ca8c3 > DISCORD_WEBHOOK
-            a1ebf68f-7c5c-4c55-a84f-b25500fe34e7 > BOT_APP_ID
-            e04c3c7c-5f88-4261-88de-b25500fed32b > BOT_APP_PRIVATE_KEY
-
-      - name: Generate Token
-        uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ env.BOT_APP_ID }}
-          private-key: ${{ env.BOT_APP_PRIVATE_KEY }}
 
       - name: Lowercase repository owner
         shell: bash
@@ -312,7 +271,7 @@ jobs:
         with:
           registry: ghcr.io
           username: "${{ github.actor }}"
-          password: "${{ steps.app-token.outputs.token }}"
+          password: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Log Files
         working-directory: /tmp/${{ matrix.image.name }}/digests
