@@ -113,7 +113,6 @@ Container | Channel | Image
 [free-game-notifier](https://github.com/vrozaksen/containers/pkgs/container/free-game-notifier) | stable | ghcr.io/vrozaksen/free-game-notifier
 [home-assistant](https://github.com/vrozaksen/containers/pkgs/container/home-assistant) | stable | ghcr.io/vrozaksen/home-assistant
 [it-tools](https://github.com/vrozaksen/containers/pkgs/container/it-tools) | stable | ghcr.io/vrozaksen/it-tools
-[kubernetes-kubectl](https://github.com/vrozaksen/containers/pkgs/container/kubernetes-kubectl) | kubectl | ghcr.io/vrozaksen/kubernetes-kubectl
 [opentofu-runner](https://github.com/vrozaksen/containers/pkgs/container/opentofu-runner) | stable | ghcr.io/vrozaksen/opentofu-runner
 [plex](https://github.com/vrozaksen/containers/pkgs/container/plex) | stable | ghcr.io/vrozaksen/plex
 [plex-beta](https://github.com/vrozaksen/containers/pkgs/container/plex-beta) | beta | ghcr.io/vrozaksen/plex-beta
@@ -127,7 +126,6 @@ Container | Channel | Image
 [radarr-nightly](https://github.com/vrozaksen/containers/pkgs/container/radarr-nightly) | nightly | ghcr.io/vrozaksen/radarr-nightly
 [readarr-develop](https://github.com/vrozaksen/containers/pkgs/container/readarr-develop) | develop | ghcr.io/vrozaksen/readarr-develop
 [readarr-nightly](https://github.com/vrozaksen/containers/pkgs/container/readarr-nightly) | nightly | ghcr.io/vrozaksen/readarr-nightly
-[redlib](https://github.com/vrozaksen/containers/pkgs/container/redlib) | stable | ghcr.io/vrozaksen/redlib
 [sabnzbd](https://github.com/vrozaksen/containers/pkgs/container/sabnzbd) | stable | ghcr.io/vrozaksen/sabnzbd
 [smartctl_exporter](https://github.com/vrozaksen/containers/pkgs/container/smartctl_exporter) | stable | ghcr.io/vrozaksen/smartctl_exporter
 [sonarr](https://github.com/vrozaksen/containers/pkgs/container/sonarr) | main | ghcr.io/vrozaksen/sonarr
