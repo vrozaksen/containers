@@ -1,5 +1,5 @@
 # Force using 3.10
-FROM docker.io/library/alpine:3.18.2
+FROM docker.io/library/alpine:3.18.11
 
 ARG TARGETPLATFORM
 ARG VERSION
