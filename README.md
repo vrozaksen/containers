@@ -113,6 +113,7 @@ Container | Channel | Image
 [free-game-notifier](https://github.com/vrozaksen/containers/pkgs/container/free-game-notifier) | stable | ghcr.io/vrozaksen/free-game-notifier
 [home-assistant](https://github.com/vrozaksen/containers/pkgs/container/home-assistant) | stable | ghcr.io/vrozaksen/home-assistant
 [it-tools](https://github.com/vrozaksen/containers/pkgs/container/it-tools) | stable | ghcr.io/vrozaksen/it-tools
+[kubernetes-kubectl](https://github.com/vrozaksen/containers/pkgs/container/kubernetes-kubectl) | kubectl | ghcr.io/vrozaksen/kubernetes-kubectl
 [opentofu-runner](https://github.com/vrozaksen/containers/pkgs/container/opentofu-runner) | stable | ghcr.io/vrozaksen/opentofu-runner
 [plex](https://github.com/vrozaksen/containers/pkgs/container/plex) | stable | ghcr.io/vrozaksen/plex
 [plex-beta](https://github.com/vrozaksen/containers/pkgs/container/plex-beta) | beta | ghcr.io/vrozaksen/plex-beta
