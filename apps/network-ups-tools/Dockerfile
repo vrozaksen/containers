@@ -1,4 +1,4 @@
-FROM ghcr.io/jr0dd/ubuntu-jammy:rolling@sha256:6fa96cfa6bd030baa8c6e0d104e7080312871c2daaec7e2702d1e890915a33b2
+FROM docker.io/library/alpine:3.21
 
 ARG VERSION
 ARG CHANNEL
@@ -11,23 +11,25 @@ LABEL dev.vrozaksen.image.target_architecture=$TARGETARCH
 LABEL dev.vrozaksen.image.target_os=$TARGETOS
 LABEL org.opencontainers.image.source="https://github.com/networkupstools/nut"
 
-# hadolint ignore=DL3008,DL3015,SC2086
-RUN \
-  apt-get -qq update \
-  && apt-get -qq install -y --no-install-recommends \
-    nut \
-  && apt-get clean \
-  && rm -rf \
-    /tmp/* \
-    /var/lib/apt/lists/ \
-    /var/tmp/*
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 
+RUN apk add --no-cache nut
 
-EXPOSE 3493
+# fix some missing links to .so files, which are required to run 'nut-scanner' utility
+RUN find /usr/lib/ -type f -name 'libusb*' -exec ln -sf {} /usr/lib/libusb-1.0.so \; || false
+RUN find /usr/lib/ -type f -name 'libnetsnmp*' -exec ln -sf {} /usr/lib/libnetsnmp.so \; || false
+RUN find /usr/lib/ -type f -name 'libupsclient*' -exec ln -sf {} /usr/lib/libupsclient.so \; || false
+RUN find /usr/lib/ -type f -name 'libneon*' -exec ln -sf {} /usr/lib/libneon.so \; || false
 
 COPY ./entrypoint.sh /entrypoint.sh
 
-USER root
+RUN chmod 700 /entrypoint.sh
+
+RUN mkdir -p /var/run/nut && \
+    chown nut:nut /var/run/nut && \
+    chmod 700 /var/run/nut
+
 WORKDIR /config
 
-CMD ["/entrypoint.sh"]
+EXPOSE 3493
+ENTRYPOINT ["/entrypoint.sh"]
