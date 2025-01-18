@@ -1,3 +1,4 @@
+#!/bin/sh
 nutCfgVolume="/etc/nut"
 nutCfgFiles="ups.conf upsd.conf upsd.users"
 
