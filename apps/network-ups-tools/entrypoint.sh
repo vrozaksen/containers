@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-set -e
+#!/bin/sh
 
 echo "*** NUT upsd startup ***"
 
