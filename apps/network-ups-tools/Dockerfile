@@ -32,4 +32,5 @@ RUN mkdir -p /var/run/nut && \
 WORKDIR /config
 
 EXPOSE 3493
+USER root
 ENTRYPOINT ["/entrypoint.sh"]
