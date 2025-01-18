@@ -15,7 +15,7 @@ LABEL org.opencontainers.image.source="https://github.com/networkupstools/nut"
 RUN \
   apt-get -qq update \
   && apt-get -qq install -y --no-install-recommends \
-    nut-server nut-client \
+    nut \
   && apt-get clean \
   && rm -rf \
     /tmp/* \
