@@ -4,35 +4,23 @@ name: "Render Readme"
 
 on:
   workflow_call:
-    secrets:
-      BW_ACCESS_TOKEN:
-        description: Bitwarden Secret Manager Access Token
-        required: true
 
 jobs:
   render-readme:
     name: Render README
     runs-on: ubuntu-latest
     steps:
-      - name: Get Secrets
-        uses: bitwarden/sm-action@v2
-        with:
-          access_token: ${{ secrets.BW_ACCESS_TOKEN }}
-          secrets: |
-            a1ebf68f-7c5c-4c55-a84f-b25500fe34e7 > BOT_APP_ID
-            e04c3c7c-5f88-4261-88de-b25500fed32b > BOT_APP_PRIVATE_KEY
-
       - name: Generate Token
         uses: actions/create-github-app-token@v1
         id: app-token
         with:
-          app-id: "${{ env.BOT_APP_ID }}"
-          private-key: "${{ env.BOT_APP_PRIVATE_KEY }}"
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: "${{ steps.app-token.outputs.token }}"
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -46,7 +34,7 @@ jobs:
 
       - name: Render README
         env:
-          GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         shell: bash
         run: python ./scripts/render-readme.py
 
