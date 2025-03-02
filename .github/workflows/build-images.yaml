@@ -1,6 +1,6 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: "Workflow call: Build Images"
+name: "Image Build"
 
 on:
   workflow_call:
@@ -25,7 +25,14 @@ on:
         required: false
         default: true
         type: boolean
-        description: "Rebuild images regardless of whether version has changed"
+        description: Force rebuild
+    secrets:
+      BOT_APP_ID:
+        description: The App ID of the GitHub App
+        required: true
+      BOT_APP_PRIVATE_KEY:
+        description: The private key of the GitHub App
+        required: true
 
 jobs:
   prepare:
@@ -33,14 +40,22 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrices: ${{ steps.prepare-matrices.outputs.matrices }}
-      runnner: ${{ steps.set-runner.outputs.runner }}
     steps:
       - name: Lowercase repository owner
         shell: bash
         run: echo "LOWERCASE_REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
 
+      - name: Generate Token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: "${{ secrets.BOT_APP_ID }}"
+          private-key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
+
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: "${{ steps.app-token.outputs.token }}"
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -55,7 +70,7 @@ jobs:
       - name: Prepare Matrices
         id: prepare-matrices
         env:
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TOKEN: ${{ steps.app-token.outputs.token }}
         shell: bash
         run: |
           if [[ -z "${{ inputs.appsToBuild }}" ]]; then
@@ -73,7 +88,7 @@ jobs:
   build-platform-images:
     name: Build/Test ${{ matrix.image.name }} (${{ matrix.image.platform }})
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.image.platform == 'linux/arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     if: ${{ toJSON(fromJSON(needs.prepare.outputs.matrices).imagePlatforms) != '[]' && toJSON(fromJSON(needs.prepare.outputs.matrices).imagePlatforms) != '' }}
     strategy:
       fail-fast: false
@@ -125,10 +140,17 @@ jobs:
           echo "${{ matrix.image.name }}" | grep -E "[a-zA-Z0-9_\.\-]+" || "Image Name is invalid"
           echo "${{ matrix.image.version }}" | grep -E "[a-zA-Z0-9_\.\-]+" || "Image Version is invalid"
 
+      - name: Generate Token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: "${{ secrets.BOT_APP_ID }}"
+          private-key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          token: "${{ steps.app-token.outputs.token }}"
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -203,6 +225,7 @@ jobs:
       - name: Export Digest
         id: export-digest
         if: ${{ inputs.pushImages }}
+        shell: bash
         run: |
           mkdir -p /tmp/${{ matrix.image.name }}/digests
           digest="${{ steps.build.outputs.digest }}"
@@ -223,19 +246,12 @@ jobs:
     needs: ["prepare", "build-platform-images"]
     # Always run merge, as the prior matrix is all or nothing. We test for prior step failure
     # in the "Test Failed Bit" step. This ensures if one app fails, others can still complete.
-    if: ${{ always() && inputs.pushImages && toJSON(fromJSON(needs.prepare.outputs.matrices).images) != '[]' && toJSON(fromJSON(needs.prepare.outputs.matrices).images) != '' }}
+    if: ${{ !cancelled() && inputs.pushImages && toJSON(fromJSON(needs.prepare.outputs.matrices).images) != '[]' && toJSON(fromJSON(needs.prepare.outputs.matrices).images) != '' }}
     strategy:
       matrix:
         image: ["${{ fromJSON(needs.prepare.outputs.matrices).images }}"]
       fail-fast: false
     steps:
-      - name: Get Secrets
-        uses: bitwarden/sm-action@v2
-        with:
-          access_token: ${{ secrets.BW_ACCESS_TOKEN }}
-          secrets: |
-            a2a728fb-6eb8-4b68-9118-b267015ca8c3 > DISCORD_WEBHOOK
-
       - name: Lowercase repository owner
         shell: bash
         run: echo "LOWERCASE_REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
@@ -298,7 +314,7 @@ jobs:
 
       - name: Build successful
         id: build-success
-        if: ${{ always() && steps.merge.outcome == 'success' && steps.inspect.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.merge.outcome == 'success' && steps.inspect.outcome == 'success' }}
         shell: bash
         run: |
           echo "message=🎉 ${{ matrix.image.name }} (${{ matrix.image.tags[0] }})" >> $GITHUB_OUTPUT
@@ -306,7 +322,7 @@ jobs:
 
       - name: Build failed
         id: build-failed
-        if: ${{ always() && (steps.merge.outcome == 'failure' || steps.inspect.outcome == 'failure') }}
+        if: ${{ !cancelled() && (steps.merge.outcome == 'failure' || steps.inspect.outcome == 'failure') }}
         shell: bash
         run: |
           echo "message=💥 ${{ matrix.image.name }} (${{ matrix.image.tags[0] }})" >> $GITHUB_OUTPUT
@@ -314,9 +330,9 @@ jobs:
 
       - name: Send Discord Webhook
         uses: sarisia/actions-status-discord@v1
-        if: ${{ always() && inputs.sendNotifications == 'true' }}
+        if: ${{ !cancelled() && inputs.sendNotifications == 'true' }}
         with:
-          webhook: ${{ env.DISCORD_WEBHOOK }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
           title: ${{ steps.build-failed.outputs.message || steps.build-success.outputs.message }}
           color: ${{ steps.build-failed.outputs.color || steps.build-success.outputs.color }}
           username: GitHub Actions
@@ -326,7 +342,7 @@ jobs:
     name: Build matrix success
     runs-on: ubuntu-latest
     needs: ["prepare", "merge"]
-    if: ${{ always() }}
+    if: ${{ !cancelled() }}
     steps:
       - name: Check build matrix status
         if: ${{ (inputs.appsToBuild != '' && inputs.appsToBuild != '[]') && (needs.merge.result != 'success' && needs.merge.result != 'skipped' && needs.prepare.result != 'success') }}

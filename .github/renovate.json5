@@ -3,12 +3,13 @@
   "extends": [
     "config:recommended",
     "docker:enableMajor",
-    ":label(renovate/{{depName}})",
-    "security:openssf-scorecard",
-    "github>vrozaksen/renovate-config",
-    "github>vrozaksen/renovate-config:autoMergeDocker",
-    "github>vrozaksen/renovate-config:autoMergeGithubActions"
+    ":dependencyDashboard",
+    ":disableRateLimiting",
+    ":timezone(Europe/Warsaw)",
+    ":semanticCommits"
   ],
+  "dependencyDashboardTitle": "Renovate Dashboard 🤖",
+  "suppressNotifications": ["prEditedNotification", "prIgnoreNotification"],
   "packageRules": [
     {
       "addLabels": ["renovate/container", "type/major"],

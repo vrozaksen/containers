@@ -15,7 +15,7 @@ _An opinionated collection of container images_
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/vrozaksen/containers?style=for-the-badge)
 ![GitHub forks](https://img.shields.io/github/forks/vrozaksen/containers?style=for-the-badge)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/vrozaksen/containers/scheduled-release.yaml?style=for-the-badge&label=Scheduled%20Release)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/vrozaksen/containers/release-scheduled.yaml?style=for-the-badge&label=Scheduled%20Release)
 
 </div>
 

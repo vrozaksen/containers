@@ -11,10 +11,9 @@ from subprocess import check_output
 
 from os.path import isfile
 
-# read repository owner's username from custom env vars, else read from GitHub Actions default env vars
 repo_owner = os.environ.get('REPO_OWNER', os.environ.get('GITHUB_REPOSITORY_OWNER'))
 
-TESTABLE_PLATFORMS = ["linux/amd64"]
+TESTABLE_PLATFORMS = ["linux/amd64", "linux/arm64"]
 
 def load_metadata_file_yaml(file_path):
     with open(file_path, "r") as f:
@@ -126,10 +125,6 @@ def get_image_metadata(subdir, meta, forRelease=False, force=False, channels=Non
             platformToBuild["target_arch"] = target_arch
             platformToBuild["version"] = version
             platformToBuild["channel"] = channel["name"]
-            # if platform == "linux/amd64":
-            #   platformToBuild["builder"] = "ubuntu-latest"
-            # elif platform == "linux/arm64":
-            #   platformToBuild["builder"] = "ARM64"
             platformToBuild["label_type"]="org.opencontainers.image"
 
             if isfile(os.path.join(subdir, channel["name"], "Dockerfile")):

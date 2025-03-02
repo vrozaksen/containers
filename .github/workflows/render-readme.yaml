@@ -4,6 +4,13 @@ name: "Render Readme"
 
 on:
   workflow_call:
+    secrets:
+      BOT_APP_ID:
+        description: The App ID of the GitHub App
+        required: true
+      BOT_APP_PRIVATE_KEY:
+        description: The private key of the GitHub App
+        required: true
 
 jobs:
   render-readme:
@@ -14,13 +21,13 @@ jobs:
         uses: actions/create-github-app-token@v1
         id: app-token
         with:
-          app-id: ${{ secrets.BOT_APP_ID }}
-          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          app-id: "${{ secrets.BOT_APP_ID }}"
+          private-key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ steps.app-token.outputs.token }}
+          token: "${{ steps.app-token.outputs.token }}"
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -34,17 +41,15 @@ jobs:
 
       - name: Render README
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
         shell: bash
         run: python ./scripts/render-readme.py
 
       - name: Commit Changes
-        uses: planetscale/ghcommit-action@v0.2.6
-        with:
-          commit_message: "chore: regenerate README.md [skip ci]"
-          repo: ${{ github.repository }}
-          branch: main
-          empty: false
-          file_pattern: "README.md"
-        env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+        shell: bash
+        run: |
+          git config --global user.name "repo-killer"
+          git config --global user.email "193152523+repo-killer[bot][bot]@users.noreply.github.com"
+          git add ./README.md
+          git commit -m "chore: render README.md" || echo "No changes to commit"
+          git push origin || echo "No changes to push"
