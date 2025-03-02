@@ -129,7 +129,6 @@ Container | Channel | Image
 [smartctl_exporter](https://github.com/vrozaksen/containers/pkgs/container/smartctl_exporter) | stable | ghcr.io/vrozaksen/smartctl_exporter
 [sonarr](https://github.com/vrozaksen/containers/pkgs/container/sonarr) | main | ghcr.io/vrozaksen/sonarr
 [sonarr-develop](https://github.com/vrozaksen/containers/pkgs/container/sonarr-develop) | develop | ghcr.io/vrozaksen/sonarr-develop
-[tautulli](https://github.com/vrozaksen/containers/pkgs/container/tautulli) | master | ghcr.io/vrozaksen/tautulli
 [volsync](https://github.com/vrozaksen/containers/pkgs/container/volsync) | stable | ghcr.io/vrozaksen/volsync
 
 
