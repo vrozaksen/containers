@@ -115,8 +115,6 @@ Container | Channel | Image
 [it-tools](https://github.com/vrozaksen/containers/pkgs/container/it-tools) | stable | ghcr.io/vrozaksen/it-tools
 [network-ups-tools](https://github.com/vrozaksen/containers/pkgs/container/network-ups-tools) | stable | ghcr.io/vrozaksen/network-ups-tools
 [opentofu-runner](https://github.com/vrozaksen/containers/pkgs/container/opentofu-runner) | stable | ghcr.io/vrozaksen/opentofu-runner
-[plex](https://github.com/vrozaksen/containers/pkgs/container/plex) | stable | ghcr.io/vrozaksen/plex
-[plex-beta](https://github.com/vrozaksen/containers/pkgs/container/plex-beta) | beta | ghcr.io/vrozaksen/plex-beta
 [prowlarr](https://github.com/vrozaksen/containers/pkgs/container/prowlarr) | master | ghcr.io/vrozaksen/prowlarr
 [prowlarr-develop](https://github.com/vrozaksen/containers/pkgs/container/prowlarr-develop) | develop | ghcr.io/vrozaksen/prowlarr-develop
 [prowlarr-nightly](https://github.com/vrozaksen/containers/pkgs/container/prowlarr-nightly) | nightly | ghcr.io/vrozaksen/prowlarr-nightly
