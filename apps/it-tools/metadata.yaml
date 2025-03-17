@@ -1,10 +1,4 @@
 ---
-app: it-tools
-semver: true
-channels:
-  - name: stable
-    platforms: ["linux/amd64", "linux/arm64"]
-    stable: true
-    tests:
-      enabled: false
-      type: web
+# renovate: datasource=github-releases depName=CorentinTh/it-tools
+version: v2024.10.22-7ca5933
+name: it-tools
