@@ -6,7 +6,8 @@ process:
     executable: "/opt/emby-server/bin/emby-server"
     user: "emby"
     args:
-      - "--ffmpeg=/usr/bin/ffmpeg"
+      - "--programdata"
+      - "/config"
 
 port:
   tcp:8096:
@@ -16,15 +17,12 @@ port:
       - "::"
 
 http:
-  http://localhost:8096/System/Info/Public:
+  http://localhost:8096/health:
     status: 200
-    timeout: 5000
+    timeout: 10000
     allow-insecure: true
     headers:
       - "Content-Type: application/json"
-    body:
-      - '"ServerName":'
-      - '"Version":'
 
 file:
   /etc/emby-server.conf:

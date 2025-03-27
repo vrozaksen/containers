@@ -9,7 +9,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LANGUAGE="en_US.UTF-8" \
     LANG="en_US.UTF-8" \
     EMBY_DATA="/config" \
-    DOTNET_SYSTEM_GLOBALIZATION_INVARIANT="1" \
     UMASK="002" \
     ASPNETCORE_URLS="http://+:8096"
 
@@ -27,7 +26,7 @@ RUN apt-get update && \
         && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen en_US.UTF-8 && \
-    update-locale LANG=en_US.UTF-8 && \
+    update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
