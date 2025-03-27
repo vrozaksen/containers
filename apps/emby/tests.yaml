@@ -3,8 +3,6 @@
 process:
   emby-server:
     running: true
-    command: "/opt/emby-server/bin/emby-server --programdata /config"
-    user: "emby"
 
 port:
   tcp:8096:
