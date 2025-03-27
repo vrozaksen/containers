@@ -12,7 +12,7 @@ port:
       - "::"
 
 http:
-  http://localhost:8096/health:
+  http://localhost:8096/System/Info/Public:
     status: 200
     timeout: 10000
     allow-insecure: true
