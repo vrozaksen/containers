@@ -28,9 +28,13 @@ RUN apt-get update && \
         && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen en_US.UTF-8 && \
-    update-locale LANG=en_US.UTF-8 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    update-locale LANG=en_US.UTF-8
+
+# Create emby user
+RUN groupadd -r -g 100 emby && \
+    useradd -r -u 1000 -g emby -G video,render -d /var/lib/emby -s /usr/sbin/nologin emby && \
+    mkdir -p /config && \
+    chown 1000:100 /config
 
 # Install Emby Server (with workaround for post-install script)
 WORKDIR /tmp
@@ -55,7 +59,7 @@ RUN mkdir -p /config && \
     echo "EMBY_DATA=/config" > /etc/emby-server.conf && \
     chown -R emby:emby /config
 
-USER emby:emby
+USER 1000:100
 WORKDIR /config
 VOLUME ["/config"]
 
