@@ -5,7 +5,6 @@ ARG VERSION
 
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ="Etc/UTC" \
-    EMBY_DATA="/config" \
     UMASK="002"
 
 # Install minimal runtime dependencies
@@ -37,7 +36,7 @@ RUN case "${TARGETPLATFORM}" in \
     esac && \
     curl -fSL "https://github.com/MediaBrowser/Emby.Releases/releases/download/${VERSION}/emby-server-deb_${VERSION}_${ARCH}.deb" -o emby-server.deb && \
     dpkg --unpack emby-server.deb && \
-    sed -i '/systemctl/d' /var/lib/dpkg/info/emby-server.postinst && \
+    rm -rf /usr/lib/systemd /var/lib/dpkg/info/emby-server.postinst && \
     dpkg --configure -a && \
     apt-get install -fy && \
     rm emby-server.deb && \
