@@ -3,7 +3,6 @@
 process:
   emby-server:
     running: true
-    timeout: 30000
 
 port:
   tcp:8096:
