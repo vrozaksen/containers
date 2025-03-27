@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     UMASK="002" \
     ASPNETCORE_URLS="http://+:8096" \
     GOSS_WAIT_OPTS="-r 60s -s 5s" \
-    GOSS_SLEEP="15"
+    GOSS_SLEEP="15s"
 
 # Install dependencies and configure locale
 RUN apt-get update && \
