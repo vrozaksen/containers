@@ -24,19 +24,20 @@ RUN apt-get update && \
         procps \
         libicu72 \
         libssl3 \
-        systemd \
         && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen en_US.UTF-8 && \
-    update-locale LANG=en_US.UTF-8
+    update-locale LANG=en_US.UTF-8 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create emby user
-RUN groupadd -r -g 100 emby && \
-    useradd -r -u 1000 -g emby -G video,render -d /var/lib/emby -s /usr/sbin/nologin emby && \
+RUN groupadd -r emby && \
+    useradd -r -g emby -d /var/lib/emby -s /usr/sbin/nologin emby && \
     mkdir -p /config && \
-    chown 1000:100 /config
+    chown emby:emby /config
 
-# Install Emby Server (with workaround for post-install script)
+# Install Emby Server
 WORKDIR /tmp
 RUN case "${TARGETPLATFORM}" in \
         'linux/amd64') export ARCH='amd64' ;; \
@@ -44,9 +45,8 @@ RUN case "${TARGETPLATFORM}" in \
         'linux/arm/v7') export ARCH='armhf' ;; \
     esac && \
     curl -fsSL "https://github.com/MediaBrowser/Emby.Releases/releases/download/${VERSION}/emby-server-deb_${VERSION}_${ARCH}.deb" -o emby-server.deb && \
-    # Workaround for problematic post-install script
     dpkg --unpack emby-server.deb && \
-    rm /var/lib/dpkg/info/emby-server.postinst && \
+    rm -f /var/lib/dpkg/info/emby-server.postinst && \
     dpkg --configure -a && \
     apt-get install -fy && \
     rm emby-server.deb && \
@@ -54,12 +54,10 @@ RUN case "${TARGETPLATFORM}" in \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
-# Configure for container
-RUN mkdir -p /config && \
-    echo "EMBY_DATA=/config" > /etc/emby-server.conf && \
-    chown -R emby:emby /config
+# Final configuration
+RUN echo "EMBY_DATA=/config" > /etc/emby-server.conf
 
-USER 1000:100
+USER emby
 WORKDIR /config
 VOLUME ["/config"]
 
