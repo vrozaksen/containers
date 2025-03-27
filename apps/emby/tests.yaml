@@ -3,28 +3,12 @@
 process:
   emby-server:
     running: true
-    executable: "/opt/emby-server/bin/emby-server"
-    args:
-      - "--programdata"
-      - "/config"
-
 port:
-  tcp6:8096:
+  tcp:8096:
     listening: true
-    ip:
-      - "::"
-
 http:
-  http://localhost:8096/System/Info/Public:
+  http://localhost:8096:
     status: 200
-    timeout: 10000
-    allow-insecure: true
-    headers:
-      - "Content-Type: application/json"
-    body:
-      - '"ServerName":'
-      - '"Version":'
-
 file:
   /etc/emby-server.conf:
     exists: true
@@ -35,6 +19,3 @@ file:
     filetype: directory
     owner: "emby"
     group: "emby"
-  /healthcheck.sh:
-    exists: true
-    mode: "0755"
