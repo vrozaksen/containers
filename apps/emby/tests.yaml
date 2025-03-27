@@ -3,11 +3,8 @@
 process:
   emby-server:
     running: true
-    executable: "/opt/emby-server/bin/emby-server"
+    command: "/opt/emby-server/bin/emby-server --programdata /config"
     user: "emby"
-    args:
-      - "--programdata"
-      - "/config"
 
 port:
   tcp:8096:
