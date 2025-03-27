@@ -20,7 +20,8 @@ RUN apt-get update && \
         fontconfig \
         libfreetype6 \
         libass9 \
-    rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /tmp/*
 
 # Create emby user and config directory
 RUN groupadd -r emby && \
