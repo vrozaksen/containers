@@ -10,9 +10,11 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LANG="en_US.UTF-8" \
     EMBY_DATA="/config" \
     UMASK="002" \
-    ASPNETCORE_URLS="http://+:8096"
+    ASPNETCORE_URLS="http://+:8096" \
+    GOSS_WAIT_OPTS="-r 60s -s 5s" \
+    GOSS_SLEEP="15"
 
-# Install dependencies
+# Install dependencies and configure locale
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         locales \
@@ -26,7 +28,7 @@ RUN apt-get update && \
         && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen en_US.UTF-8 && \
-    update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
+    update-locale LANG=en_US.UTF-8 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -53,8 +55,14 @@ RUN case "${TARGETPLATFORM}" in \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
-# Final configuration
-RUN echo "EMBY_DATA=/config" > /etc/emby-server.conf
+# Final configuration with health check
+RUN echo "EMBY_DATA=/config" > /etc/emby-server.conf && \
+    echo "#!/bin/sh" > /healthcheck.sh && \
+    echo "curl -fs http://localhost:8096/System/Info/Public || exit 1" >> /healthcheck.sh && \
+    chmod +x /healthcheck.sh
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD /healthcheck.sh
 
 USER emby
 WORKDIR /config
