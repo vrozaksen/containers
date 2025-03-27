@@ -1,0 +1,38 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
+process:
+  emby-server:
+    running: true
+    executable: "/opt/emby-server/bin/emby-server"
+    user: "emby"
+    args:
+      - "--ffmpeg=/usr/bin/ffmpeg"
+
+port:
+  tcp:8096:
+    listening: true
+    ip:
+      - "0.0.0.0"
+      - "::"
+
+http:
+  http://localhost:8096/System/Info/Public:
+    status: 200
+    timeout: 5000
+    allow-insecure: true
+    headers:
+      - "Content-Type: application/json"
+    body:
+      - '"ServerName":'
+      - '"Version":'
+
+file:
+  /etc/emby-server.conf:
+    exists: true
+    contains:
+      - "EMBY_DATA=/config"
+  /config:
+    exists: true
+    filetype: directory
+    owner: "emby"
+    group: "emby"

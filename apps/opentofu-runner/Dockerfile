@@ -24,10 +24,6 @@ LABEL org.opencontainers.image.source="https://github.com/opentofu/opentofu"
 
 FROM ghcr.io/flux-iac/tf-runner:v0.16.0-rc.5 AS runner
 
-ARG VERSION
-ARG TARGETARCH
-ARG TARGETPLATFORM
-
 USER root
 
 COPY --from=opentofu --chown=65532:65532 /tmp/tofu /usr/local/bin/terraform
