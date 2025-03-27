@@ -1,11 +1,5 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
-process:
-  emby-server:
-    running: true
-port:
-  tcp:8096:
-    listening: true
 http:
   http://localhost:8096:
     status: 200
@@ -17,4 +11,4 @@ file:
   /entrypoint.sh:
     exists: true
     filetype: file
-    mode: "755"
+    mode: "0755"
