@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
 process:
-  emby-server:
+  EmbyServer:
     running: true
 port:
   tcp:8096:
@@ -19,3 +19,4 @@ file:
     filetype: directory
     owner: "emby"
     group: "emby"
+    mode: "0755"
