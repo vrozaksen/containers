@@ -22,13 +22,6 @@ RUN apt-get update && \
         libass9 \
     && rm -rf /var/lib/apt/lists/*
 
-# Create user and directories
-RUN groupadd -r emby && \
-    useradd -r -g emby -d /config -s /usr/sbin/nologin emby && \
-    mkdir -p /config /var/lib/emby && \
-    chown -R emby:emby /config /var/lib/emby && \
-    ln -s /config /var/lib/emby
-
 # Install Emby
 WORKDIR /tmp
 RUN case "${TARGETPLATFORM}" in \
@@ -44,13 +37,14 @@ RUN case "${TARGETPLATFORM}" in \
     rm emby-server.deb && \
     apt-get clean
 
-# Final config
-RUN echo "EMBY_DATA=/config" > /etc/emby-server.conf
+# Minimal config
+RUN echo "EMBY_DATA=${EMBY_DATA}" > /etc/emby-server.conf
 
-USER emby
-WORKDIR /config
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 VOLUME ["/config"]
 
-ENTRYPOINT ["/opt/emby-server/bin/EmbyServer", "--programdata", "/config"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/MediaBrowser/Emby.Releases"
