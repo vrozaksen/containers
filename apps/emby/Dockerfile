@@ -1,7 +1,7 @@
 FROM docker.io/library/debian:bookworm-slim
 
-ARG TARGETPLATFORM="linux/amd64"
-ARG VERSION="4.8.11.0"
+ARG TARGETPLATFORM
+ARG VERSION
 
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ="Etc/UTC" \
