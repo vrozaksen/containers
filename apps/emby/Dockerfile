@@ -20,8 +20,7 @@ RUN apt-get update && \
         fontconfig \
         libfreetype6 \
         libass9 \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /tmp/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Create emby user and config directory
 RUN groupadd -r emby && \
@@ -31,7 +30,12 @@ RUN groupadd -r emby && \
 
 # Install Emby Server with modified post-install
 WORKDIR /tmp
-RUN curl -fSL "https://github.com/MediaBrowser/Emby.Releases/releases/download/${VERSION}/emby-server-deb_${VERSION}_${TARGETPLATFORM}.deb" -o emby-server.deb && \
+RUN case "${TARGETPLATFORM}" in \
+        'linux/amd64') ARCH='amd64' ;; \
+        'linux/arm64') ARCH='arm64' ;; \
+        *) ARCH='amd64' ;; \
+    esac && \
+    curl -fSL "https://github.com/MediaBrowser/Emby.Releases/releases/download/${VERSION}/emby-server-deb_${VERSION}_${ARCH}.deb" -o emby-server.deb && \
     dpkg --unpack emby-server.deb && \
     sed -i '/systemctl/d' /var/lib/dpkg/info/emby-server.postinst && \
     dpkg --configure -a && \
