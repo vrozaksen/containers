@@ -45,6 +45,8 @@ RUN chmod +x /entrypoint.sh
 
 VOLUME ["/config"]
 
+USER nobody:nogroup
+
 ENTRYPOINT ["/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/MediaBrowser/Emby.Releases"
