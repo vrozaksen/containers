@@ -1,5 +1,5 @@
 FROM docker.io/library/alpine:3.21
-
+LABEL org.opencontainers.image.source="https://github.com/Radarr/Radarr"
 ARG TARGETPLATFORM
 ARG VENDOR
 ARG VERSION
@@ -49,5 +49,3 @@ WORKDIR /config
 VOLUME ["/config"]
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
-
-LABEL org.opencontainers.image.source="https://github.com/Radarr/Radarr"

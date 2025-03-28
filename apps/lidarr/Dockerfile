@@ -1,5 +1,5 @@
 FROM docker.io/library/alpine:3.21
-LABEL org.opencontainers.image.source="https://github.com/Prowlarr/Prowlarr"
+LABEL org.opencontainers.image.source="https://github.com/Lidarr/Lidarr"
 ARG TARGETPLATFORM
 ARG VENDOR
 ARG VERSION
@@ -8,8 +8,8 @@ ENV UMASK="0002" \
     TZ="Etc/UTC"
 
 ENV \
-    DOTNET_EnableDiagnostics="0" \
-    PROWLARR__UPDATE__BRANCH="develop"
+    DOTNET_EnableDiagnostics=0 \
+    LIDARR__UPDATE__BRANCH=develop
 
 USER root
 WORKDIR /app
@@ -20,8 +20,10 @@ RUN \
         bash \
         ca-certificates \
         catatonit \
+        chromaprint \
         coreutils \
         curl \
+        ffmpeg \
         icu-libs \
         jo \
         jq \
@@ -36,11 +38,11 @@ RUN \
         'linux/arm64') export ARCH='arm64' ;; \
     esac \
     && mkdir -p /app/bin \
-    && curl -fsSL "https://prowlarr.servarr.com/v1/update/${PROWLARR__UPDATE__BRANCH}/updatefile?version=${VERSION}&os=linuxmusl&runtime=netcore&arch=${ARCH}" \
+    && curl -fsSL "https://lidarr.servarr.com/v1/update/${LIDARR__UPDATE__BRANCH}/updatefile?version=${VERSION}&os=linuxmusl&runtime=netcore&arch=${ARCH}" \
         | tar xzf - -C /app/bin --strip-components=1 \
-    && printf "UpdateMethod=docker\nBranch=%s\nPackageVersion=%s\nPackageAuthor=[%s](https://github.com/%s)\n" "${PROWLARR__UPDATE__BRANCH}" "${VERSION}" "${VENDOR}" "${VENDOR}" > /app/package_info \
+    && printf "UpdateMethod=docker\nBranch=%s\nPackageVersion=%s\nPackageAuthor=[%s](https://github.com/%s)\n" "${LIDARR__UPDATE__BRANCH}" "${VERSION}" "${VENDOR}" "${VENDOR}" > /app/package_info \
     && chown -R root:root /app && chmod -R 755 /app \
-    && rm -rf /tmp/*  /app/bin/Prowlarr.Update
+    && rm -rf /tmp/* /app/bin/Lidarr.Update /app/bin/fpcalc
 
 COPY ./entrypoint.sh /entrypoint.sh
 

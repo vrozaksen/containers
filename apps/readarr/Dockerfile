@@ -1,5 +1,5 @@
 FROM docker.io/library/alpine:3.21
-
+LABEL org.opencontainers.image.source="https://github.com/Readarr/Readarr"
 ARG TARGETPLATFORM
 ARG VENDOR
 ARG VERSION
@@ -7,9 +7,8 @@ ARG VERSION
 ENV UMASK="0002" \
     TZ="Etc/UTC"
 
-ENV \
-    DOTNET_EnableDiagnostics="0" \
-    READARR__UPDATE__BRANCH="develop"
+ENV COMPlus_EnableDiagnostics=0 \
+    READARR__UPDATE__BRANCH=develop
 
 USER root
 WORKDIR /app
@@ -30,7 +29,6 @@ RUN \
         sqlite-libs \
         trurl \
         tzdata \
-        xmlstarlet \
     && \
     case "${TARGETPLATFORM}" in \
         'linux/amd64') export ARCH='x64' ;; \
@@ -50,5 +48,3 @@ WORKDIR /config
 VOLUME ["/config"]
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
-
-LABEL org.opencontainers.image.source="https://github.com/Readarr/Readarr"

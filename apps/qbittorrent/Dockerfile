@@ -1,5 +1,5 @@
-FROM docker.io/library/alpine:3.21
-
+FROM docker.io/library/python:3.13-alpine
+LABEL org.opencontainers.image.source="https://github.com/qbittorrent/qBittorrent"
 ARG TARGETPLATFORM
 ARG VERSION
 
@@ -24,15 +24,10 @@ RUN \
         catatonit \
         coreutils \
         curl \
-        geoip \
         jo \
         jq \
         nano \
         p7zip \
-        python3 \
-        py3-pip \
-        qt6-qtbase \
-        qt6-qtbase-sqlite \
         trurl \
         tzdata \
     && \
@@ -58,5 +53,3 @@ WORKDIR /config
 VOLUME ["/config"]
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
-
-LABEL org.opencontainers.image.source="https://github.com/qbittorrent/qBittorrent"

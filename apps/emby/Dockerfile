@@ -1,5 +1,5 @@
 FROM docker.io/library/debian:bookworm-slim
-
+LABEL org.opencontainers.image.source="https://github.com/MediaBrowser/Emby.Releases"
 ARG TARGETPLATFORM
 ARG VERSION
 
@@ -49,5 +49,3 @@ RUN mkdir /config && chown -R nobody:nogroup /config
 USER nobody:nogroup
 
 ENTRYPOINT ["/entrypoint.sh"]
-
-LABEL org.opencontainers.image.source="https://github.com/MediaBrowser/Emby.Releases"

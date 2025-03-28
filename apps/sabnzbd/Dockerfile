@@ -1,5 +1,5 @@
 FROM docker.io/library/python:3.13-alpine
-
+LABEL org.opencontainers.image.source="https://github.com/sabnzbd/sabnzbd"
 ARG TARGETPLATFORM
 ARG VERSION
 
@@ -65,5 +65,3 @@ WORKDIR /config
 VOLUME ["/config"]
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
-
-LABEL org.opencontainers.image.source="https://github.com/sabnzbd/sabnzbd"

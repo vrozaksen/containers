@@ -1,5 +1,6 @@
+ARG VERSION
 FROM docker.io/library/golang:1.24-alpine AS volsync
-
+LABEL org.opencontainers.image.source="https://github.com/backube/volsync"
 ARG VERSION
 ARG TARGETOS
 ARG TARGETARCH
@@ -35,7 +36,7 @@ RUN \
         && chmod a+rx /mover-restic/*.sh \
     && rm -rf /tmp/*
 
-COPY --from=docker.io/rclone/rclone:1.69.1 /usr/local/bin/rclone /usr/local/bin/rclone
+COPY --from=ghcr.io/rclone/rclone:1.69.1 /usr/local/bin/rclone /usr/local/bin/rclone
 COPY --from=docker.io/restic/restic:0.18.0 /usr/bin/restic /usr/local/bin/restic
 COPY --from=volsync /go/bin/volsync /manager
 

@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Image Build
 
 on:
@@ -6,29 +7,45 @@ on:
     inputs:
       app:
         type: string
-        description: The name of the app to build
+        description: Application Name
         required: true
       version:
         type: string
-        description: The version of the app to build
+        description: Version
         required: true
       release:
         type: boolean
-        description: Whether to release the app
+        description: Release
+        required: true
+      test:
+        type: boolean
+        description: Test
         required: true
 
 jobs:
   build:
     name: Build ${{ inputs.app }} (${{ matrix.platform }})
-    runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.runner }}
     strategy:
-      matrix:
-        platform: ["amd64", "arm64"]
       fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
     outputs:
       amd64: ${{ steps.digest.outputs.amd64 }}
       arm64: ${{ steps.digest.outputs.arm64 }}
     steps:
+      - name: Setup Vars
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        id: vars
+        with:
+          script: |
+            core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
+            core.setOutput('platform-arch', '${{ matrix.platform }}'.split('/').pop());
+
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
@@ -36,8 +53,8 @@ jobs:
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
           registry: ghcr.io
-          username: "${{ github.actor }}"
-          password: "${{ github.token }}"
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
@@ -47,114 +64,94 @@ jobs:
         id: build
         with:
           build-args: |
-            VENDOR=${{ github.repository_owner }}
+            VENDOR=${{ steps.vars.outputs.repository-owner }}
             VERSION=${{ inputs.version }}
             REVISION=${{ github.sha }}
           cache-from: |
-            ${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', github.repository_owner, inputs.app, matrix.platform) }}
+            ${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform-arch) }}
           cache-to: |
-            ${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', github.repository_owner, inputs.app, matrix.platform) || '' }}
+            ${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform-arch) || '' }}
           labels: |
             org.opencontainers.image.title=${{ inputs.app }}
-            org.opencontainers.image.url=https://ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
+            org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
             org.opencontainers.image.version=${{ inputs.version }}
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.vendor=${{ steps.vars.outputs.repository-owner }}
           outputs: |
             type=docker
-            ${{ inputs.release && format('type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', github.repository_owner, inputs.app) || '' }}
+            ${{ inputs.release && format('type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '' }}
           context: ./apps/${{ inputs.app }}
-          platforms: linux/${{ matrix.platform }}
+          platforms: ${{ matrix.platform }}
           provenance: false
 
-      - name: Determine Testing Tool
-        id: test
-        run: |
-          if ! yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
-              echo "tool=goss" >> $GITHUB_OUTPUT
-          else
-              echo "tool=cst" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Run container-structure-test
-        if: ${{ steps.test.outputs.tool == 'cst' }}
-        uses: docker://ghcr.io/googlecontainertools/container-structure-test:1.19.3
+      - if: ${{ inputs.test }}
+        name: Run Tests
+        uses: ./.github/actions/test-container
         with:
-          args: test --image ${{ steps.build.outputs.imageid }} --config /github/workspace/apps/${{ inputs.app }}/tests.yaml
-
-      - name: Setup goss
-        if: ${{ steps.test.outputs.tool == 'goss' }}
-        uses: mlipscombe/goss-installation-action@a440e50e0ca070a5b84fc4b99a4e2bc7f9390201 # v1.2.2
-        with:
-          version: latest
-
-      - name: Run goss
-        if: ${{ steps.test.outputs.tool == 'goss' }}
-        env:
-          CONTAINER_RUNTIME: docker
-          GOSS_FILE: ./apps/${{ inputs.app }}/tests.yaml
-          GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
-          GOSS_SLEEP: 2
-          GOSS_FILES_STRATEGY: cp
-          CONTAINER_LOG_OUTPUT: goss_container_log_output
-        run: dgoss run ${{ steps.build.outputs.imageid }}
+          app: ${{ inputs.app }}
+          image: ${{ steps.build.outputs.imageid }}
+          token: ${{ github.token }}
 
       - if: ${{ inputs.release }}
         name: Export Digest
         id: digest
         run: |
-          echo "${{ matrix.platform }}=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
+          echo "${{ steps.vars.outputs.platform-arch }}=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
 
   release:
     if: ${{ inputs.release }}
     needs: build
     name: Release ${{ inputs.app }}
     runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
     steps:
+      - name: Setup Vars
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        id: vars
+        with:
+          script: |
+            core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
           registry: ghcr.io
-          username: "${{ github.actor }}"
-          password: "${{ github.token }}"
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
 
-      - name: Setup Node
-        uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
+      - name: Determine Definitive Versions
+        uses: ./.github/actions/definitive-versions
+        id: version
         with:
-          node-version: 22.x
-
-      - name: Install Semver
-        run: npm install semver
-
-      - name: Determine Semver Compliance
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        id: semver
-        with:
-          script: |
-            const semver = require('semver')
-            const version = "${{ inputs.version }}";
-            return semver.valid(`${version}`) !== null;
+          version: ${{ inputs.version }}
 
       - name: Build Meta
-        id: meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
+        id: meta
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
         with:
           flavor: latest=false
-          images: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
+          images: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
           tags: |
-            type=match,pattern=^v?(\d+(\.\d+)?(\.\d+)?(\.\d+)?),value=${{ inputs.version }}
-            type=match,pattern=^v?(\d+(\.\d+)),value=${{ inputs.version }},enable=${{ steps.semver.outputs.result }}
-            type=match,pattern=^v?(\d+),value=${{ inputs.version }},enable=${{ steps.semver.outputs.result }}
+            type=semver,pattern={{version}},value=${{ steps.version.outputs.semantic }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.semantic }},enable=${{ steps.version.outputs.is-valid-semver }}
+            type=semver,pattern={{major}},value=${{ steps.version.outputs.semantic }},enable=${{ steps.version.outputs.is-valid-semver }}
+            type=raw,value=${{ steps.version.outputs.raw }},enable=${{ steps.version.outputs.is-valid-semver }}
             type=raw,value=rolling
 
       - name: Push Images
-        id: push
         uses: Noelware/docker-manifest-action@b33ab348026b120a895167160f5605b0197f0862 # 0.4.3
+        id: push
         with:
           inputs: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
           images: >-
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.amd64 }},
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.arm64 }}
+            ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.build.outputs.amd64 }},
+            ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.build.outputs.arm64 }}
           push: true
 
       - name: Export Digest
@@ -163,8 +160,61 @@ jobs:
           digest=$(echo "${{ steps.push.outputs.images }}" | grep -oP 'sha256:[^, ]+' | head -n1)
           echo "digest=${digest}" >> $GITHUB_OUTPUT
 
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.8.1
+  attest:
+    if: ${{ inputs.release }}
+    needs: release
+    name: Attest ${{ inputs.app }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Vars
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        id: vars
+        with:
+          script: |
+            core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
 
-      - name: Sign Image
-        run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ steps.digest.outputs.digest }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Upload Dependency Snapshot
+        uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
+        with:
+          dependency-snapshot: true
+          image: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+
+      - name: Attestation
+        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
+        with:
+          push-to-registry: true
+          subject-name: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
+          subject-digest: ${{ needs.release.outputs.digest }}
+
+      - name: Verify Attestation
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+
+  notify:
+    if: ${{ inputs.release && !cancelled() }}
+    needs: ["build", "release", "attest"]
+    name: Notify
+    runs-on: ubuntu-latest
+    steps:
+      - if: ${{ contains(needs.*.result, 'failure') }}
+        name: Send Discord Webhook
+        uses: sarisia/actions-status-discord@5ddd3b114a98457dd80a39b2f00b6a998cd69008 # v1.15.3
+        with:
+          color: "0xFF0000"
+          description: |
+            Application: `${{ inputs.app }}`
+            Version: `${{ inputs.version }}`
+            [Rebuild](${{ github.server_url }}/${{ github.repository }}/actions/workflows/release.yaml)
+          nodetail: true
+          title: Container build failed
+          username: GitHub Actions
+          url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}

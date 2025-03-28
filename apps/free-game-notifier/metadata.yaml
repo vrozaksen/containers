@@ -1,4 +1,4 @@
 ---
-# renovate: datasource=github-releases depName=jakmaz/free-games-notifier
-version: 0
+# renovate: datasource=github-releases depName=j6nca/free-game-notifier
+version: 1.6.0
 name: free-game-notifier
