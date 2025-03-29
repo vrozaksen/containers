@@ -14,7 +14,7 @@ _An opinionated collection of container images_
 
 </div>
 
-Welcome to container images, if looking for a container start by [browsing the GitHub Packages page for this repo's packages](https://github.com/vrozaksen?tab=packages&repo_name=containers). Please also check out the inspiration repo from [onedr0p](https://github.com/onedr0p/containers) and [joryirving](https://github.com/joryirving/containers.
+Welcome to container images, if looking for a container start by [browsing the GitHub Packages page for this repo's packages](https://github.com/vrozaksen?tab=packages&repo_name=containers). Please also check out the inspiration repo from [onedr0p](https://github.com/onedr0p/containers) and [joryirving](https://github.com/joryirving/containers).
 
 ## Mission statement
 
