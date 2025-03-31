@@ -3,7 +3,7 @@
   packageRules: [
     {
       description: ["Auto-merge container app updates"],
-      matchFileNames: ["**/metadata.yaml"],
+      matchFileNames: ["**/docker-bake.hcl"],
       automerge: true,
       automergeType: "pr",
       ignoreTests: false,

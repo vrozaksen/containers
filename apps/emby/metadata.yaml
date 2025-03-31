@@ -1,4 +1,0 @@
----
-# renovate: datasource=github-releases depName=MediaBrowser/Emby.Releases
-version: 4.8.11.0
-name: emby

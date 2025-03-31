@@ -13,6 +13,6 @@ RUN \
   && pnpm build
 
 FROM ghcr.io/vrozaksen/caddy-scratch:2.9.1@sha256:06dc74a75811c01c70d23a79937614ff632e2c5d46b8fe23d53d3038c33cda98
-LABEL org.opencontainers.image.source="https://github.com/CorentinTh/it-tools"
+
 COPY --chown=1000:1000 --from=build /app/dist/ /app
 CMD ["file-server", "--root", "/app", "--listen", ":8080"]

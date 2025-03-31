@@ -1,5 +1,5 @@
 FROM docker.io/library/debian:bookworm-slim
-LABEL org.opencontainers.image.source="https://github.com/MediaBrowser/Emby.Releases"
+
 ARG TARGETPLATFORM
 ARG VERSION
 
