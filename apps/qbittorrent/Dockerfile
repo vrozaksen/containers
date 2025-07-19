@@ -6,7 +6,7 @@ ARG QBARCH=${TARGETARCH/arm64/aarch64}
 ARG QBARCH=${QBARCH/amd64/x86_64}
 ARG VERSION
 
-# renovate: datasource=github depName=ludviglundgren/qbittorrent-cli
+# renovate: datasource=github-releases depName=ludviglundgren/qbittorrent-cli
 ARG QBITORRENT_CLI_VERSION=v2.2.0
 
 ENV QBT_CONFIRM_LEGAL_NOTICE=1 \
@@ -38,8 +38,6 @@ RUN \
     curl -fsSL https://github.com/ludviglundgren/qbittorrent-cli/releases/download/${QBITORRENT_CLI_VERSION}/qbittorrent-cli_${QBITORRENT_CLI_VERSION#*v}_linux_${TARGETARCH}.tar.gz \
         | tar xzf - -C /usr/local/bin \
     && rm -rf /tmp/*
-
-RUN
 
 COPY . /
 
