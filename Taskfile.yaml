@@ -77,4 +77,4 @@ tasks:
         sh: ls --directory {{.ROOT_DIR}}/apps/*/ | xargs --max-args=1 basename
     preconditions:
       - sh: '[[ -z {{.CLI_FORCE}} ]]'
-      - which gh
+      - which yq
