@@ -54,8 +54,7 @@ tasks:
 
   remote-build-*:
     desc: Build and Test an app via GitHub Actions
-    cmds:
-      - gh workflow run release.yaml -f app={{.APP}} -f release={{.RELEASE}}
+    cmd: gh workflow run release.yaml -f app={{.APP}} -f release={{.RELEASE}}
     vars:
       APP: '{{index .MATCH 0}}'
       RELEASE: '{{.RELEASE | default "false"}}'
@@ -78,3 +77,4 @@ tasks:
         sh: ls --directory {{.ROOT_DIR}}/apps/*/ | xargs --max-args=1 basename
     preconditions:
       - sh: '[[ -z {{.CLI_FORCE}} ]]'
+      - which gh
