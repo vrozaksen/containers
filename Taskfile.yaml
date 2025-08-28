@@ -20,7 +20,7 @@ tasks:
     cmds:
       - rsync -a --ignore-existing --progress {{.ROOT_DIR}}/include/ {{.WORK_DIR}}
       - rsync -a --ignore-existing --progress {{.ROOT_DIR}}/apps/{{.APP}}/ {{.WORK_DIR}}
-      - docker buildx bake --no-cache --metadata-file docker-bake.json --load
+      - docker buildx bake --no-cache --metadata-file docker-bake.json --set=*.output=type=docker,compression=zstd,force-compression=true --load
       - |
         IMAGE=$(jq --raw-output '."image-local"."image.name"' docker-bake.json)
         case "{{.TEST_TOOL}}" in
