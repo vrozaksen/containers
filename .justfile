@@ -6,7 +6,7 @@ set shell := ['bash', '-eu', '-o', 'pipefail', '-c']
 bin_dir := justfile_dir() + '/.bin'
 
 [private]
-@default:
+default:
     just --list
 
 [doc('Build and test an app locally')]
