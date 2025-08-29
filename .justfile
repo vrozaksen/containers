@@ -27,6 +27,6 @@ remote-build app release="false":
 [private]
 generate-label-config:
     find "{{justfile_dir()}}/apps" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" | while IFS= read -r app; do \
-        yq --inplace ". += [{\"name\": \"app/$app\", \"color\": \"027fa0\"}]" {{justfile_dir()}}/.github/labels.yaml; \
-        yq --inplace ". += {\"app/$app\": [{\"changed-files\": [{\"any-glob-to-any-file\": [\"apps/$app/**\"]}]}]}" {{justfile_dir()}}/.github/labeler.yaml; \
+        yq -i ". += [{\"name\": \"app/$app\", \"color\": \"027fa0\"}]" {{justfile_dir()}}/.github/labels.yaml; \
+        yq -i ". += {\"app/$app\": [{\"changed-files\": [{\"any-glob-to-any-file\": [\"apps/$app/**\"]}]}]}" {{justfile_dir()}}/.github/labeler.yaml; \
     done
