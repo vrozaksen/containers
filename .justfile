@@ -1,5 +1,8 @@
 #!/usr/bin/env -S just --justfile
 
+set quiet
+set shell := ['bash', '-eu', '-o', 'pipefail', '-c']
+
 bin_dir := justfile_dir() + '/.bin'
 
 [private]
@@ -8,7 +11,7 @@ bin_dir := justfile_dir() + '/.bin'
 
 [doc('Build and test an app locally')]
 [working-directory: '.cache']
-@local-build app:
+local-build app:
     rsync -aqIP {{justfile_dir()}}/include/ {{justfile_dir()}}/apps/{{app}}/ .
     docker buildx bake --no-cache --metadata-file docker-bake.json --set=*.output=type=docker --load
     if yq -e '.schemaVersion' {{justfile_dir()}}/apps/{{app}}/tests.yaml &>/dev/null; then \
@@ -18,11 +21,11 @@ bin_dir := justfile_dir() + '/.bin'
     fi
 
 [doc('Trigger a remote build')]
-@remote-build app release="false":
+remote-build app release="false":
     gh workflow run release.yaml -f app={{app}} -f release={{release}}
 
 [private]
-@generate-label-config:
+generate-label-config:
     find "{{justfile_dir()}}/apps" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" | while IFS= read -r app; do \
         yq --inplace ". += [{\"name\": \"app/$app\", \"color\": \"027fa0\"}]" {{justfile_dir()}}/.github/labels.yaml; \
         yq --inplace ". += {\"app/$app\": [{\"changed-files\": [{\"any-glob-to-any-file\": [\"apps/$app/**\"]}]}]}" {{justfile_dir()}}/.github/labeler.yaml; \
