@@ -16,7 +16,6 @@ if [[ ! -f "${CONFIG_FILE}" ]]; then
         -e "s|^InterDir=.*|InterDir=$\{MainDir\}/intermediate|g" \
         -e "s|^LogFile=.*|LogFile=$\{MainDir\}/nzbget.log|g" \
         -e "s|^AuthorizedIP=.*|AuthorizedIP=127.0.0.1|g" \
-        -e "s|^ShellOverride=.*|ShellOverride=.py=/usr/bin/python3;.sh=/bin/bash|g" \
         -e "s|^UpdateCheck=.*|UpdateCheck=none|g" \
         -e "s|^ControlUsername=.*|ControlUsername=|g" \
         -e "s|^ControlPassword=.*|ControlPassword=|g" \
