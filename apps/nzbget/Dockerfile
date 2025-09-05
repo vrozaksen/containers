@@ -29,6 +29,7 @@ RUN \
         coreutils \
         curl \
         jq \
+        lscpu \
         nano \
         tzdata \
     && \
@@ -36,6 +37,7 @@ RUN \
         "https://github.com/nzbgetcom/nzbget/releases/download/v${VERSION}/nzbget-${VERSION}-bin-linux.run" \
     && \
     sh /tmp/nzbget.run --destdir /app \
+    && rm -rf /app/7za /app/unrar /app/unrar7 \
     && pip install uv \
     && uv pip install apprise pynzb requests \
     && chown -R root:root /app && chmod -R 755 /app \
