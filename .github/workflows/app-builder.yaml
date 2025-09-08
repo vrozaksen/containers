@@ -2,13 +2,6 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Application Builder
 
-permissions:
-  attestations: write
-  contents: read
-  id-token: write
-  packages: write
-  security-events: write
-
 on:
   workflow_call:
     inputs:
