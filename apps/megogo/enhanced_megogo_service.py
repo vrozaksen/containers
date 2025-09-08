@@ -14,15 +14,10 @@ import datetime
 import requests
 from urllib.parse import urlencode, quote_plus, parse_qsl
 from fastapi import FastAPI, HTTPException, Form, Request, Query
-from fast            input[type="text"], input[type="password"], input[type="email"], input[type="number"] {
-                width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
-                font-size: 14px; box-sizing: border-box; }
-            input[type="checkbox"] {
-                margin-right: 8px; transform: scale(1.2); }
-            button { background: linear-gradient(135deg, #007bff, #0056b3); color: white;responses import HTMLResponse, PlainTextResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 import uvicorn
 
-app = FastAPI(title="Enhanced Megogo Service", version="2.0.0")
+app = FastAPI(title="Enhanced Megogo Service")
 
 # Original plugin constants
 UA = 'Dalvik/2.1.0 (Linux; U; Android 8.0.0; Unknown sdk_google_atv_x86; Build/OSR1.180418.025)'
@@ -337,7 +332,8 @@ class EnhancedMegogoClient:
                         name += f" - {clean_program}"
 
                 # M3U entry with safe headers
-                extinf_line = f'#EXTINF:0 tvg-id="{channel_id}" tvg-name="{channel['title']}" tvg-logo="{logo}" group-title="Megogo Live"'
+                channel_title = channel['title']
+                extinf_line = f'#EXTINF:0 tvg-id="{channel_id}" tvg-name="{channel_title}" tvg-logo="{logo}" group-title="Megogo Live"'
 
                 if channel.get('is_dvr'):
                     extinf_line += ' catchup="append" catchup-source="&s={utc:Y-m-dTH:M:S}&e={utcend:Y-m-dTH:M:S}" catchup-days="7"'
