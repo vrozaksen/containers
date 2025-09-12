@@ -23,7 +23,7 @@ target "image" {
   }
   labels = {
     "org.opencontainers.image.title" = "Megogo M3U Generator"
-    "org.opencontainers.image.description" = "Docker container for generating M3U playlists from Megogo TV service"
+    "org.opencontainers.image.description" = "Advanced M3U playlist generator for Megogo.net with device authentication support. Compatible with Emby, Jellyfin, VLC and other IPTV players."
     "org.opencontainers.image.version" = "${VERSION}"
     "org.opencontainers.image.source" = "${SOURCE}"
   }

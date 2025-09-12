@@ -9,19 +9,19 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Install only required Python dependencies
+# Install required Python dependencies
 RUN pip install --no-cache-dir requests
 
 # Create application directory and user
 WORKDIR /app
 RUN groupadd -r megogo && useradd -r -g megogo megogo
 
-# Copy application files from build context
-COPY . /app/
-RUN chmod +x /app/entrypoint.sh || chmod +x /app/apps/megogo/entrypoint.sh || true
-RUN if [ -f /app/apps/megogo/entrypoint.sh ]; then mv /app/apps/megogo/* /app/; fi
+# Copy application files
+COPY megogo_m3u.py /app/
+COPY entrypoint.sh /app/
+RUN chmod +x /app/entrypoint.sh
 
-# Create data directory for cache
+# Create data directory for configuration and cache
 RUN mkdir -p /app/data && chown -R megogo:megogo /app
 
 # Switch to non-root user
