@@ -16,13 +16,13 @@ RUN pip install --no-cache-dir requests
 WORKDIR /app
 RUN groupadd -r wppilot && useradd -r -g wppilot wppilot
 
-# Copy only needed application files
-COPY --chown=wppilot:wppilot apps/wppilot/wppilot_m3u.py ./
-COPY --chown=wppilot:wppilot apps/wppilot/entrypoint.sh ./
-RUN chmod +x entrypoint.sh
+# Copy application files from build context
+COPY . /app/
+RUN chmod +x /app/entrypoint.sh || chmod +x /app/apps/wppilot/entrypoint.sh || true
+RUN if [ -f /app/apps/wppilot/entrypoint.sh ]; then mv /app/apps/wppilot/* /app/; fi
 
 # Create data directory for cache
-RUN mkdir -p /app/data && chown -R wppilot:wppilot /app/data
+RUN mkdir -p /app/data && chown -R wppilot:wppilot /app
 
 # Switch to non-root user
 USER wppilot

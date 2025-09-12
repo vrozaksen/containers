@@ -16,13 +16,13 @@ RUN pip install --no-cache-dir requests
 WORKDIR /app
 RUN groupadd -r megogo && useradd -r -g megogo megogo
 
-# Copy only needed application files
-COPY --chown=megogo:megogo apps/megogo/megogo_m3u.py ./
-COPY --chown=megogo:megogo apps/megogo/entrypoint.sh ./
-RUN chmod +x entrypoint.sh
+# Copy application files from build context
+COPY . /app/
+RUN chmod +x /app/entrypoint.sh || chmod +x /app/apps/megogo/entrypoint.sh || true
+RUN if [ -f /app/apps/megogo/entrypoint.sh ]; then mv /app/apps/megogo/* /app/; fi
 
 # Create data directory for cache
-RUN mkdir -p /app/data && chown -R megogo:megogo /app/data
+RUN mkdir -p /app/data && chown -R megogo:megogo /app
 
 # Switch to non-root user
 USER megogo

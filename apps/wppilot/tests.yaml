@@ -1,15 +1,12 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
-process:
-  python3:
-    running: true
-port:
-  tcp:8080:
-    listening: true
-http:
-  http://localhost:8080/status:
-    status: 200
-    timeout: 10000
-    body:
-      - "status"
-      - "logged_in"
+file:
+  /app/wppilot_m3u.py:
+    exists: true
+    mode: "0644"
+  /app/entrypoint.sh:
+    exists: true
+    mode: "0755"
+user:
+  wppilot:
+    exists: true
