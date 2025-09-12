@@ -173,11 +173,32 @@ docker logs -f megogo-m3u
 ## 🏗️ Building
 
 ```bash
-# Build locally
-docker build -t megogo-m3u .
+# Build from repository root (recommended)
+cd /path/to/containers
+docker build -f apps/megogo/Dockerfile -t megogo-m3u:latest .
 
-# Use docker bake
-docker buildx bake
+# Multi-platform build (from repository root)
+docker buildx bake -f apps/megogo/docker-bake.hcl image-all
+
+# Local development and testing (requires just)
+cd /path/to/containers
+just local-build megogo
+```
+
+**Note**: Due to CI/CD requirements, the Dockerfile is designed to be built from the repository root directory, not from the app directory.
+
+## 🧪 Testing
+
+Tests use [goss](https://github.com/goss-org/goss) framework and verify:
+- Python process is running
+- Port 8080 is listening
+- Status endpoint returns valid JSON
+- M3U playlist endpoint works
+- Generated playlist has correct format
+
+Run tests with:
+```bash
+just local-build megogo
 ```
 
 ## 📝 License

@@ -17,8 +17,8 @@ WORKDIR /app
 RUN groupadd -r megogo && useradd -r -g megogo megogo
 
 # Copy only needed application files
-COPY --chown=megogo:megogo megogo_m3u.py ./
-COPY --chown=megogo:megogo entrypoint.sh ./
+COPY --chown=megogo:megogo apps/megogo/megogo_m3u.py ./
+COPY --chown=megogo:megogo apps/megogo/entrypoint.sh ./
 RUN chmod +x entrypoint.sh
 
 # Create data directory for cache
