@@ -1,7 +1,7 @@
 target "docker-metadata-action" {}
 
 variable "APP" {
-  default = "megogo"
+  default = "megogo-m3u"
 }
 
 variable "VERSION" {

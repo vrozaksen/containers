@@ -1,229 +1,188 @@
-# 🎬 Megogo M3U Generator Service
+# 📺 Megogo M3U Generator
 
-A Docker container that generates M3U playlists from the Megogo TV service for use with media servers like Emby, Jellyfin, Plex, and other IPTV players.
+Simple M3U playlist generator from free Megogo.net channels. Based on Kodi plugin functionality for Megogo.
 
 ## 🚀 Features
 
-- **🔐 Secure Authentication**: Login with your Megogo credentials
-- **📺 Live TV**: Generate M3U playlists with all available live channels
-- **⏪ Catchup Support**: 7-day replay functionality for supported channels
-- **📊 EPG Integration**: Optional current program information in channel names
-- **🔄 Auto Token Refresh**: Automatic session management
-- **🌐 Web Interface**: Easy-to-use web interface for configuration
-- **🐳 Dockerized**: Easy deployment with Docker
-- **📱 Multi-Platform**: Supports AMD64 and ARM64 architectures
+- **📺 Free Channels**: Generate M3U playlists from free Megogo channels
+- **📻 TV & Radio**: Supports both television and radio channels
+- **⏪ Catchup**: 7-day replay for supported channels
+- **📊 EPG**: Optional current program information
+- **🚀 HTTP Server**: Built-in server for serving playlists
+- **🐳 Docker**: Easy deployment with Docker
+- **💾 Cache**: Channel list caching for better performance
+- **🌐 Multi-language**: Configurable language support
 
-## 📋 Prerequisites
+## 📋 Requirements
 
-- Docker installed on your system
-- Valid Megogo account credentials
-- Network access to Megogo services
+- Python 3.7+ (for standalone version)
+- Docker (for containerized version)
+- Internet connection with access to Megogo.net
 
-## 🏗️ Building the Container
+## 🚀 Usage
 
-### Using Docker Bake (Recommended)
+### Command Line Arguments
+
+| Argument | Description | Default |
+|----------|-------------|---------|
+| `--output`, `-o` | Output M3U file path | Auto-generated |
+| `--epg` | Include current program information | False |
+| `--server` | Run as HTTP server | False |
+| `--port` | HTTP server port | 8080 |
+| `--host` | Server IP address | 0.0.0.0 |
+| `--refresh-interval` | Cache refresh interval (seconds) | 3600 |
+| `--cache-duration` | Cache lifetime (seconds) | 3600 |
+| `--lang` | API language | From env or 'pl' |
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MEGOGO_LANG` | Language for API calls (pl, uk, ru, etc.) | pl |
+| `ENABLE_EPG` | Enable EPG by default (true/false) | false |
+| `REFRESH_INTERVAL` | Auto-refresh interval in seconds | 3600 |
+| `CACHE_DURATION` | Cache duration in seconds | 3600 |
+| `TZ` | Timezone | Europe/Warsaw |
+
+### Standalone (Python)
 
 ```bash
-cd apps/megogo
-docker buildx bake
+# Install requirements
+pip install requests
+
+# Generate M3U file
+python3 megogo_m3u.py --output megogo.m3u
+
+# Generate with EPG information
+python3 megogo_m3u.py --output megogo.m3u --epg
+
+# Run as HTTP server
+python3 megogo_m3u.py --server --port 8080
+
+# Run with custom language
+MEGOGO_LANG=uk python3 megogo_m3u.py --server --port 8080
 ```
 
-### Using Docker Build
+### Docker
 
 ```bash
-cd apps/megogo
-docker build -t megogo-service .
-```
+# Build image
+docker build -t megogo-m3u .
 
-## 🚀 Running the Container
-
-### Quick Start
-
-```bash
+# Run container
 docker run -d \
-  --name megogo-service \
+  --name megogo-m3u \
   -p 8080:8080 \
-  -v megogo-data:/app/data \
-  ghcr.io/vrozaksen/megogo:latest
+  -e MEGOGO_LANG=pl \
+  -e REFRESH_INTERVAL=7200 \
+  megogo-m3u
+
+# Run with EPG enabled by default
+docker run -d \
+  --name megogo-m3u-epg \
+  -p 8080:8080 \
+  -e MEGOGO_LANG=pl \
+  -e ENABLE_EPG=true \
+  megogo-m3u
+
+# Run with Ukrainian language
+docker run -d \
+  --name megogo-m3u-ua \
+  -p 8081:8080 \
+  -e MEGOGO_LANG=uk \
+  megogo-m3u
 ```
 
 ### Docker Compose
-
-Create a `docker-compose.yml` file:
 
 ```yaml
 version: '3.8'
 
 services:
-  megogo:
-    image: ghcr.io/vrozaksen/megogo:latest
-    container_name: megogo-service
+  megogo-m3u:
+    build: .
+    container_name: megogo-m3u
     ports:
       - "8080:8080"
-    volumes:
-      - megogo-data:/app/data
+    environment:
+      - MEGOGO_LANG=pl
+      - ENABLE_EPG=false
+      - REFRESH_INTERVAL=3600
+      - CACHE_DURATION=3600
+      - TZ=Europe/Warsaw
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/status"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
-
-volumes:
-  megogo-data:
 ```
 
-Then run:
+### Docker Bake
 
 ```bash
-docker-compose up -d
+docker buildx bake
 ```
-
-## ⚙️ Configuration
-
-1. **Access the Web Interface**: Open `http://localhost:8080` in your browser
-2. **Login**: Enter your Megogo email and password
-3. **Configure Settings**: Adjust language and geographic zone if needed
-4. **Get M3U URL**: Copy the generated M3U playlist URL
-
-## 📺 Integration with Media Servers
-
-### Emby / Jellyfin
-
-1. Navigate to **Live TV** settings in your media server
-2. Click **Add** next to **TV Tuners**
-3. Select **M3U Tuner**
-4. Enter the M3U URL: `http://your-server-ip:8080/playlist.m3u`
-5. Optionally, set up EPG if your media server supports it
-6. Save and refresh the TV guide
-
-### Plex
-
-1. Install the **IPTV** plugin for Plex
-2. Configure it with the M3U URL: `http://your-server-ip:8080/playlist.m3u`
-
-### VLC / Other Players
-
-Simply open the M3U URL in your player: `http://your-server-ip:8080/playlist.m3u`
 
 ## 🔗 API Endpoints
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /` | Web interface |
-| `GET /playlist.m3u` | M3U playlist |
-| `GET /playlist.m3u?epg=true` | M3U playlist with EPG info |
-| `GET /channels` | JSON list of channels |
-| `GET /stream/{channel_id}` | Direct stream URL (redirects) |
-| `GET /health` | Health check |
-| `POST /login` | Login endpoint |
-| `POST /logout` | Logout endpoint |
-| `POST /config` | Update configuration |
+| Endpoint | Description | Parameters |
+|----------|-------------|------------|
+| `GET /` | M3U playlist | `?epg=true/false` to override default EPG |
+| `GET /playlist.m3u` | M3U playlist | `?epg=true/false` to override default EPG |
+| `GET /status` | Server status | - |
 
-## 🔧 Environment Variables
+## 📺 Integration Examples
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `TZ` | `Europe/Warsaw` | Timezone |
-| `PYTHONUNBUFFERED` | `1` | Python output buffering |
+### Jellyfin/Emby
 
-## 📁 Volume Mounts
+1. Go to **Live TV** settings
+2. Add **M3U Tuner**
+3. Enter URL: `http://your-server:8080/playlist.m3u`
+4. Enable EPG: `http://your-server:8080/playlist.m3u?epg=true`
 
-- `/app/data` - Configuration and cache storage
-
-## 🏥 Health Monitoring
-
-The container includes a health check that verifies the service is responding:
+### VLC Player
 
 ```bash
-# Check container health
-docker ps
-
-# View health check logs
-docker inspect --format='{{.State.Health}}' megogo-service
+vlc http://your-server:8080/playlist.m3u
 ```
 
-## 🔐 Security Notes
+### IPTV Simple Client (Kodi)
 
-- The service requires your Megogo credentials to function
-- Credentials are stored locally in the container's data volume
-- All communication with Megogo uses HTTPS
-- The web interface should be secured if exposed to the internet
+- M3U URL: `http://your-server:8080/playlist.m3u`
+- EPG URL: Not supported yet
 
-## 🛠️ Troubleshooting
+## 🔧 Troubleshooting
 
-### Common Issues
-
-1. **Login Failed**
-   - Verify your Megogo credentials
-   - Check if your account region matches the configured geo zone
-   - Ensure network connectivity to Megogo services
-
-2. **No Channels Available**
-   - Confirm you're logged in successfully
-   - Check if your Megogo subscription includes live TV
-   - Verify geographic restrictions
-
-3. **Streams Not Playing**
-   - Check your media server's network access to the container
-   - Verify the stream URLs are accessible from your media server
-   - Check container logs for errors
-
-### Viewing Logs
+### Check logs
 
 ```bash
-# View container logs
-docker logs megogo-service
+# Container logs
+docker logs megogo-m3u
 
-# Follow logs in real-time
-docker logs -f megogo-service
+# Live logs
+docker logs -f megogo-m3u
 ```
 
-### Container Shell Access
+### Common issues
+
+1. **No channels**: Check connection to megogo.net
+2. **Stream errors**: URLs may require additional DRM handling
+3. **Slow loading**: Increase cache-duration
+
+## 🏗️ Building
 
 ```bash
-# Access container shell for debugging
-docker exec -it megogo-service /bin/bash
+# Build locally
+docker build -t megogo-m3u .
+
+# Use docker bake
+docker buildx bake
 ```
 
-## 🔄 Updates
+## 📝 License
 
-To update to the latest version:
-
-```bash
-# Pull latest image
-docker pull ghcr.io/vrozaksen/megogo:latest
-
-# Recreate container
-docker-compose down
-docker-compose up -d
-```
-
-## 📝 Configuration Files
-
-The service stores its configuration in `/app/data/config.json`. You can back up this file to preserve your settings.
-
-## 🌐 Network Requirements
-
-- Outbound HTTPS access to `api.megogo.net`
-- Outbound HTTP/HTTPS access to Megogo CDN servers for streams
-- Inbound access on port 8080 for the web interface and M3U access
-
-## 📊 Performance
-
-- Minimal resource usage (typically < 100MB RAM)
-- Fast startup time (< 30 seconds)
-- Efficient stream proxying with HTTP redirects
-- Automatic token refresh to maintain sessions
-
-## 🤝 Support
-
-For issues and feature requests, please check the troubleshooting section above or create an issue in the repository.
-
-## 📜 License
-
-This project is provided as-is for educational and personal use. Ensure you comply with Megogo's terms of service when using this software.
+This project is for educational and personal use. Make sure you comply with Megogo's terms of service when using this software.
 
 ## ⚠️ Disclaimer
 
