@@ -6,7 +6,6 @@ echo "📊 Cache directory: /app/data"
 echo "📺 M3U playlist URL: http://localhost:8080/playlist.m3u"
 echo "📊 Status endpoint: http://localhost:8080/status"
 echo "💡 Add ?epg=true/false to override EPG setting"
-echo "💡 Add ?streams=true/false to get actual stream URLs"
 
 # Check required environment variables
 if [ -z "$WPPILOT_USERNAME" ] || [ -z "$WPPILOT_PASSWORD" ] || [ -z "$WPPILOT_NETVICAPTCHA" ]; then
@@ -40,10 +39,6 @@ if [ "$ENABLE_EPG" = "true" ]; then
     echo "📅 EPG enabled by default"
 fi
 
-# Optional direct streams
-if [ "$ENABLE_STREAMS" = "true" ]; then
-    echo "🎬 Direct streams enabled (resource intensive)"
-fi
 
 echo ""
 

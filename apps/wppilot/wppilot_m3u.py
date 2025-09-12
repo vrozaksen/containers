@@ -268,7 +268,7 @@ class WPPilotM3UGenerator:
         except Exception as e:
             print(f"⚠️  Error closing stream: {e}")
 
-    def generate_m3u(self, include_epg=False, include_streams=False, output_file=None):
+    def generate_m3u(self, include_epg=False, output_file=None):
         """Generates M3U playlist"""
         print("📺 Fetching channel list from WP Pilot...")
         channels = self.get_channels()
@@ -301,16 +301,11 @@ class WPPilotM3UGenerator:
                 if current_program:
                     display_name = f"{channel_name} • {current_program}"
 
-            # Stream URL
-            if include_streams:
-                # Get actual stream URL (requires login and may be resource intensive)
-                stream_url = self.get_stream_url(channel_id)
-                if not stream_url:
-                    # Fallback to plugin URL
-                    stream_url = f"plugin://plugin.video.wppilot?mode=playSource&cid={channel_id}"
-            else:
-                # Use plugin URL (default, doesn't require getting actual streams)
-                stream_url = f"plugin://plugin.video.wppilot?mode=playSource&cid={channel_id}"
+            # Get stream URL
+            stream_url = self.get_stream_url(channel_id)
+            if not stream_url:
+                print(f"⚠️  Failed to get stream URL for {channel_name}, skipping...")
+                continue
 
             m3u_content += f'#EXTINF:-1 tvg-id="{channel_name}" tvg-logo="{channel_logo}" group-title="WP Pilot",{display_name}\n'
             m3u_content += f"{stream_url}\n"
@@ -373,10 +368,9 @@ class M3UServer(BaseHTTPRequestHandler):
                 # Parse parameters
                 params = parse_qs(parsed_path.query)
                 include_epg = params.get('epg', ['false'])[0].lower() == 'true'
-                include_streams = params.get('streams', ['false'])[0].lower() == 'true'
 
-                print(f"📡 Generating M3U playlist (EPG: {include_epg}, Streams: {include_streams})...")
-                m3u_content = self.generator.generate_m3u(include_epg=include_epg, include_streams=include_streams)
+                print(f"📡 Generating M3U playlist (EPG: {include_epg})...")
+                m3u_content = self.generator.generate_m3u(include_epg=include_epg)
 
                 if m3u_content:
                     self.send_response(200)
@@ -427,7 +421,6 @@ def main():
     parser = argparse.ArgumentParser(description='M3U playlist generator for WP Pilot')
     parser.add_argument('--output', '-o', help='M3U output file')
     parser.add_argument('--epg', action='store_true', help='Include current program information')
-    parser.add_argument('--streams', action='store_true', help='Include actual stream URLs (resource intensive)')
     parser.add_argument('--server', action='store_true', help='Run as HTTP server')
     parser.add_argument('--port', type=int, default=8080, help='HTTP server port (default 8080)')
     parser.add_argument('--host', default='0.0.0.0', help='Server IP address (default 0.0.0.0)')
@@ -466,7 +459,6 @@ def main():
         print(f"📺 Playlist available at: http://{args.host}:{args.port}/playlist.m3u")
         print(f"📊 Server status: http://{args.host}:{args.port}/status")
         print(f"💡 Add ?epg=true/false to override EPG setting")
-        print(f"💡 Add ?streams=true/false to get actual stream URLs")
         print("⏹️  Press Ctrl+C to stop server")
 
         # Start automatic refresh if enabled
@@ -487,7 +479,7 @@ def main():
         if not args.output:
             args.output = f"wppilot_{datetime.now().strftime('%Y%m%d_%H%M%S')}.m3u"
 
-        result = generator.generate_m3u(include_epg=args.epg, include_streams=args.streams, output_file=args.output)
+        result = generator.generate_m3u(include_epg=args.epg, output_file=args.output)
         if result:
             print(f"✅ Done! Playlist saved as: {result}")
         else:

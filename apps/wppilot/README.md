@@ -6,7 +6,7 @@ Docker container for generating M3U playlists from WP Pilot TV service. Based on
 
 - 📺 Generate M3U playlists from WP Pilot channels
 - 📅 Optional EPG (Electronic Program Guide) support
-- 🎬 Optional direct stream URLs (resource intensive)
+- 🎬 Direct HLS stream URLs
 - 🔄 Automatic cache refresh
 - 🌐 HTTP API for remote access
 - 🐳 Docker container ready
@@ -29,7 +29,7 @@ You need valid WP Pilot credentials:
 | `REFRESH_INTERVAL` | No | Cache refresh interval in seconds (default: 3600) |
 | `CACHE_DURATION` | No | Cache duration in seconds (default: 3600) |
 | `ENABLE_EPG` | No | Enable EPG by default (default: false) |
-| `ENABLE_STREAMS` | No | Enable direct streams (default: false, resource intensive) |
+
 
 ### Docker Run
 
@@ -69,7 +69,7 @@ services:
 
 | Endpoint | Description | Parameters |
 |----------|-------------|------------|
-| `/playlist.m3u` | Get M3U playlist | `?epg=true/false`, `?streams=true/false` |
+| `/playlist.m3u` | Get M3U playlist | `?epg=true/false` |
 | `/status` | Service status | None |
 
 ### Examples
@@ -80,9 +80,6 @@ curl http://localhost:8080/playlist.m3u
 
 # Playlist with EPG
 curl http://localhost:8080/playlist.m3u?epg=true
-
-# Playlist with direct streams (resource intensive)
-curl http://localhost:8080/playlist.m3u?streams=true
 
 # Service status
 curl http://localhost:8080/status
@@ -103,6 +100,17 @@ python3 wppilot_m3u.py --server --port 8080 --username USER --password PASS --ne
 
 ## Getting netvicaptcha Cookie
 
+The `netvicaptcha` cookie is automatically set during the WP Pilot login process and is required for API authentication.
+
+### Method 1: Extract from Browser (Recommended)
+1. Open WP Pilot in your browser
+2. Login to your account
+3. Open browser developer tools (F12)
+4. Go to Application/Storage tab → Cookies → https://pilot.wp.pl
+5. Find the `netvicaptcha` cookie and copy its value
+6. Use this value as `WPPILOT_NETVICAPTCHA`
+
+### Method 2: Network Tab
 1. Open WP Pilot in your browser
 2. Login to your account
 3. Open browser developer tools (F12)
@@ -110,6 +118,8 @@ python3 wppilot_m3u.py --server --port 8080 --username USER --password PASS --ne
 5. Make any request to pilot.wp.pl
 6. Look for the `netvicaptcha` cookie value in the request headers
 7. Copy this value to use as `WPPILOT_NETVICAPTCHA`
+
+**Note**: The `netvicaptcha` cookie may expire and need to be refreshed periodically.
 
 ## Building
 
@@ -141,18 +151,10 @@ Run tests with:
 just local-build wppilot
 ```
 
-## Stream Types
+## Stream URLs
 
-### Plugin URLs (Default)
-- Format: `plugin://plugin.video.wppilot?mode=playSource&cid=CHANNEL_ID`
-- Requires Kodi with WP Pilot plugin
-- Low resource usage
-- Immediate generation
-
-### Direct Stream URLs
-- Format: Actual HLS/DASH stream URLs
-- Works with any player
-- Higher resource usage
+- Format: `https://.../*.m3u8` (HLS streams)
+- Works with any M3U8-compatible player (VLC, IPTV apps, etc.)
 - Requires authentication for each channel
 - May have rate limiting
 
@@ -169,8 +171,9 @@ just local-build wppilot
 - Look at logs for authentication errors
 
 ### Stream Playback Issues
-- For plugin URLs: Ensure Kodi with WP Pilot plugin is installed
-- For direct streams: Check network connectivity and player compatibility
+- Check network connectivity and player compatibility
+- Ensure your player supports HLS/M3U8 streams
+- Some streams may have geographical restrictions
 
 ## API Response Examples
 
