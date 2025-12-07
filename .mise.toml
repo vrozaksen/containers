@@ -4,7 +4,7 @@ GOSS_OPTS = "--retry-timeout 60s --sleep 1s"
 GOSS_PATH = "{{config_root}}/.bin/goss/goss"
 
 [tools]
-"aqua:casey/just" = "1.43.1"
+"aqua:casey/just" = "1.44.0"
 "aqua:cli/cli" = "2.83.1"
 "aqua:GoogleContainerTools/container-structure-test" = "1.22.0"
 "aqua:jqlang/jq" = "1.8.1"
