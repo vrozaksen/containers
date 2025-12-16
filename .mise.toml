@@ -6,7 +6,7 @@ GOSS_PATH = "{{config_root}}/.bin/goss/goss"
 [tools]
 "aqua:casey/just" = "1.45.0"
 "aqua:cli/cli" = "2.83.2"
-"aqua:GoogleContainerTools/container-structure-test" = "1.22.0"
+"aqua:GoogleContainerTools/container-structure-test" = "1.22.1"
 "aqua:jqlang/jq" = "1.8.1"
 "aqua:mikefarah/yq" = "4.50.1"
 
