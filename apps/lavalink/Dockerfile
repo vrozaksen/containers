@@ -11,7 +11,7 @@ RUN \
     curl -fsSL -o /Lavalink.jar \
         "https://github.com/lavalink-devs/Lavalink/releases/download/${VERSION}/Lavalink.jar"
 
-FROM docker.io/library/eclipse-temurin:21-jre-alpine
+FROM docker.io/library/eclipse-temurin:25-jre-alpine
 
 ENV LANG="C.UTF-8"
 
