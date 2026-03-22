@@ -23,6 +23,7 @@ RUN \
         ca-certificates \
         catatonit \
         curl \
+        libgcc \
         su-exec \
         tzdata \
     && \
