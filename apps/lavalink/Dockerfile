@@ -35,6 +35,10 @@ COPY --from=fetcher /Lavalink.jar /app/Lavalink.jar
 COPY defaults/ /app/defaults/
 COPY entrypoint.sh /entrypoint.sh
 
+LABEL org.opencontainers.image.source="https://github.com/lavalink-devs/Lavalink" \
+      org.opencontainers.image.title="Lavalink" \
+      org.opencontainers.image.description="Lavalink v4 audio server for Discord bots"
+
 USER nobody:nogroup
 WORKDIR /data
 VOLUME ["/data"]

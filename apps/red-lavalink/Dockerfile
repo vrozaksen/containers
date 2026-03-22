@@ -35,6 +35,10 @@ COPY --from=fetcher /Lavalink.jar /app/Lavalink.jar
 COPY defaults/ /app/defaults/
 COPY entrypoint.sh /entrypoint.sh
 
+LABEL org.opencontainers.image.source="https://github.com/Cog-Creators/Lavalink-Jars" \
+      org.opencontainers.image.title="Red-Lavalink" \
+      org.opencontainers.image.description="Lavalink v3 server for Red-DiscordBot (Cog-Creators fork)"
+
 USER nobody:nogroup
 WORKDIR /data
 VOLUME ["/data"]

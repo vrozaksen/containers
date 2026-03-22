@@ -59,6 +59,10 @@ RUN \
 COPY --from=builder /opt/venv /opt/venv
 COPY . /
 
+LABEL org.opencontainers.image.source="https://github.com/Cog-Creators/Red-DiscordBot" \
+      org.opencontainers.image.title="Red-DiscordBot" \
+      org.opencontainers.image.description="Custom rootless Red-DiscordBot with JSON and PostgreSQL backend support"
+
 USER nobody:nogroup
 WORKDIR /data
 VOLUME ["/data"]
