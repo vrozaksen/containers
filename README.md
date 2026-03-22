@@ -8,13 +8,13 @@ _An opinionated collection of container images_
 
 <div align="center">
 
-![GitHub Repo stars](https://img.shields.io/github/stars/home-operations/containers?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/home-operations/containers?style=for-the-badge)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/home-operations/containers/release.yaml?style=for-the-badge&label=Release)
+![GitHub Repo stars](https://img.shields.io/github/stars/vrozaksen/containers?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/vrozaksen/containers?style=for-the-badge)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/vrozaksen/containers/release.yaml?style=for-the-badge&label=Release)
 
 </div>
 
-Welcome to our container images! If you are looking for a container, start by [browsing the GitHub Packages page for this repository's packages](https://github.com/orgs/home-operations/packages?repo_name=containers).
+Welcome to our container images! If you are looking for a container, start by [browsing the GitHub Packages page for this repository's packages](https://github.com/vrozaksen?tab=packages&repo_name=containers).
 
 ## Mission Statement
 
@@ -30,10 +30,10 @@ Containers built here do not use immutable tags in the traditional sense, as see
 
 | Container | Immutable |
 |-----------------------|----|
-| `ghcr.io/home-operations/home-assistant:rolling` | ❌ |
-| `ghcr.io/home-operations/home-assistant:2025.5.1` | ❌ |
-| `ghcr.io/home-operations/home-assistant:rolling@sha256:8053...` | ✅ |
-| `ghcr.io/home-operations/home-assistant:2025.5.1@sha256:8053...` | ✅ |
+| `ghcr.io/vrozaksen/home-assistant:rolling` | ❌ |
+| `ghcr.io/vrozaksen/home-assistant:2025.5.1` | ❌ |
+| `ghcr.io/vrozaksen/home-assistant:rolling@sha256:8053...` | ✅ |
+| `ghcr.io/vrozaksen/home-assistant:2025.5.1@sha256:8053...` | ✅ |
 
 _If pinning an image to the `sha256` digest, tools like [Renovate](https://github.com/renovatebot/renovate) can update containers based on digest or version changes._
 
@@ -46,7 +46,7 @@ By default the majority of our containers run as a non-root user (`65534:65534`)
 ```yaml
 services:
   home-assistant:
-    image: ghcr.io/home-operations/home-assistant:2025.5.1
+    image: ghcr.io/vrozaksen/home-assistant:2025.5.1
     container_name: home-assistant
     user: 1000:1000 # The data volume permissions must match this user:group
     read_only: true # May require mounting in additional dirs as tmpfs
@@ -70,7 +70,7 @@ spec:
     spec:
       containers:
         - name: home-assistant
-          image: ghcr.io/home-operations/home-assistant:2025.5.1
+          image: ghcr.io/vrozaksen/home-assistant:2025.5.1
           securityContext: # May require mounting in additional dirs as emptyDir
             allowPrivilegeEscalation: false
             capabilities:
@@ -114,7 +114,7 @@ These container images are signed using the [attest-build-provenance](https://gi
 To verify that the image was built by GitHub CI, use the following command:
 
 ```sh
-gh attestation verify --repo home-operations/containers oci://ghcr.io/home-operations/${APP}:${TAG}
+gh attestation verify --repo vrozaksen/containers oci://ghcr.io/vrozaksen/${APP}:${TAG}
 ```
 
 or by using [cosign](https://github.com/sigstore/cosign):
@@ -122,8 +122,8 @@ or by using [cosign](https://github.com/sigstore/cosign):
 ```sh
 cosign verify-attestation --new-bundle-format --type slsaprovenance1 \
     --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-    --certificate-identity-regexp "^https://github.com/home-operations/containers/.github/workflows/app-builder.yaml@refs/heads/main" \
-    ghcr.io/home-operations/${APP}:${TAG}
+    --certificate-identity-regexp "^https://github.com/vrozaksen/containers/.github/workflows/app-builder.yaml@refs/heads/main" \
+    ghcr.io/vrozaksen/${APP}:${TAG}
 ```
 
 ### Eschewed Features
@@ -131,7 +131,7 @@ cosign verify-attestation --new-bundle-format --type slsaprovenance1 \
 This repository does not support multiple "channels" for the same application. For example:
 
 - **Prowlarr**, **Radarr**, **Lidarr**, and **Sonarr** only publish the **develop** branch, not the **master** (stable) branch.
-- **qBittorrent** is only published with **LibTorrent 2.x**.
+- **qBittorrent** is only published with **LibTorrent 2.x**. See [this issue](https://github.com/vrozaksen/containers/issues/848) for more information.
 
 This approach ensures consistency and focuses on streamlined builds.
 
@@ -141,9 +141,10 @@ We encourage the use of official upstream container images whenever possible. Ho
 
 - The upstream application is **actively maintained**.
 - **And** one of the following applies:
-  - No official upstream container exists.
-  - The official image does not support **multi-architecture builds**.
-  - The official image uses tools like **s6-overlay**, **gosu**, or other unconventional initialization mechanisms.
+  - no official image exists.
+  - the official image does not support **multi-architecture builds**.
+  - the official image uses tools like **s6-overlay**, **gosu**, or other unconventional initialization mechanisms.
+  - does not tag releases.
 
 ## Deprecations
 
@@ -165,4 +166,4 @@ Forking this repository is straightforward. Keep the following in mind:
 
 ## Credits
 
-This repository draws inspiration and ideas from the home-ops community, [hotio.dev](https://hotio.dev/), and [linuxserver.io](https://www.linuxserver.io/) contributors.
+This repository is based on [home-operations/containers](https://github.com/home-operations/containers) and draws inspiration from the home-ops community, [hotio.dev](https://hotio.dev/), and [linuxserver.io](https://www.linuxserver.io/) contributors.
