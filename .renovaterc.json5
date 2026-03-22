@@ -74,5 +74,12 @@
       matchPackageNames: ["/python/"],
       allowedVersions: "/3\\.14-slim/",
     },
+    {
+      description: ["Pin Python 3.11 for Red-DiscordBot (requires Python <3.12)"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["apps/red-discordbot/Dockerfile"],
+      matchPackageNames: ["/python/"],
+      allowedVersions: "/3\\.11-slim/",
+    },
   ],
 }

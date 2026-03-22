@@ -1,0 +1,52 @@
+spring:
+  cloud:
+    config:
+      import-check:
+        enabled: false
+
+server:
+  port: 2333
+  address: 0.0.0.0
+
+lavalink:
+  server:
+    password: "changeme"
+    sources:
+      youtube: false
+      bandcamp: true
+      soundcloud: true
+      twitch: true
+      vimeo: true
+      http: true
+      local: true
+    filters:
+      volume: true
+      equalizer: true
+      karaoke: true
+      timescale: true
+      tremolo: true
+      vibrato: true
+      distortion: true
+      rotation: true
+      channelMix: true
+      lowPass: true
+      echo: true
+    bufferDurationMs: 400
+    frameBufferDurationMs: 1000
+    opusEncodingQuality: 10
+    resamplingQuality: MEDIUM
+    trackStuckThresholdMs: 10000
+    useSeekGhosting: true
+    playerUpdateInterval: 30
+    youtubePlaylistLoadLimit: 100
+    gc-warnings: true
+
+logging:
+  level:
+    root: INFO
+    lavalink: INFO
+  logback:
+    rollingpolicy:
+      max-file-size: 25MB
+      max-history: 7
+      total-size-cap: 1GB
