@@ -1,52 +1,96 @@
-spring:
-  cloud:
-    config:
-      import-check:
-        enabled: false
-
-server:
-  port: 2333
-  address: 0.0.0.0
-
 lavalink:
+  plugins:
+  - dependency: dev.lavalink.youtube:youtube-plugin:1.18.0
+    repository: https://maven.lavalink.dev/releases
   server:
-    password: "changeme"
+    bufferDurationMs: 400
+    frameBufferDurationMs: 1000
+    gc-warnings: true
+    password: youshallnotpass
+    playerUpdateInterval: 1
+    soundcloudSearchEnabled: true
     sources:
-      youtube: false
       bandcamp: true
+      http: true
+      local: true
       soundcloud: true
       twitch: true
       vimeo: true
-      http: true
-      local: true
-    filters:
-      volume: true
-      equalizer: true
-      karaoke: true
-      timescale: true
-      tremolo: true
-      vibrato: true
-      distortion: true
-      rotation: true
-      channelMix: true
-      lowPass: true
-      echo: true
-    bufferDurationMs: 400
-    frameBufferDurationMs: 1000
-    opusEncodingQuality: 10
-    resamplingQuality: MEDIUM
-    trackStuckThresholdMs: 10000
-    useSeekGhosting: true
-    playerUpdateInterval: 30
+      youtube: false
     youtubePlaylistLoadLimit: 100
-    gc-warnings: true
-
+    youtubeSearchEnabled: true
 logging:
+  file:
+    path: ./logs/
   level:
-    root: INFO
     lavalink: INFO
+    root: INFO
   logback:
     rollingpolicy:
-      max-file-size: 25MB
-      max-history: 7
-      total-size-cap: 1GB
+      max-history: 15
+      max-size: 10MB
+plugins:
+  youtube:
+    allowDirectPlaylistIds: true
+    allowDirectVideoIds: true
+    allowSearch: true
+    clientOptions:
+      ANDROID_MUSIC:
+        playback: true
+        playlistLoading: false
+        searching: true
+        videoLoading: true
+      ANDROID_VR:
+        playback: true
+        playlistLoading: true
+        searching: true
+        videoLoading: true
+      IOS:
+        playback: true
+        playlistLoading: true
+        searching: true
+        videoLoading: true
+      MUSIC:
+        playback: false
+        playlistLoading: false
+        searching: true
+        videoLoading: false
+      MWEB:
+        playback: true
+        playlistLoading: true
+        searching: true
+        videoLoading: true
+      TV:
+        playback: false
+        playlistLoading: false
+        searching: false
+        videoLoading: false
+      TVHTML5EMBEDDED:
+        playback: false
+        playlistLoading: false
+        searching: true
+        videoLoading: true
+      WEB:
+        playback: true
+        playlistLoading: true
+        searching: true
+        videoLoading: true
+      WEBEMBEDDED:
+        playback: true
+        playlistLoading: false
+        searching: false
+        videoLoading: true
+    clients:
+    - MUSIC
+    - WEBEMBEDDED
+    - ANDROID_VR
+    - ANDROID_MUSIC
+    - TVHTML5EMBEDDED
+    - TV
+    - IOS
+    - WEB
+    - MWEB
+    enabled: true
+server:
+  address: 0.0.0.0
+  port: 2333

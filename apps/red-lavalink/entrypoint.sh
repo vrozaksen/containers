@@ -31,7 +31,34 @@ if [ "$(id -u)" -eq 0 ]; then
     chown -R "$PUID:$PGID" /data
 fi
 
-# --- Default config ---
+# --- Auto-update application.yml and youtube plugin ---
+echo "Checking for Red-DiscordBot Lavalink updates..."
+
+LATEST_RED_VERSION="$(curl -sf https://api.github.com/repos/Cog-Creators/Red-DiscordBot/releases/latest | jq -r '.tag_name' 2>/dev/null || echo "")"
+
+if [ -n "$LATEST_RED_VERSION" ]; then
+    YML_URL="https://github.com/Cog-Creators/Red-DiscordBot/releases/download/${LATEST_RED_VERSION}/Red-DiscordBot-${LATEST_RED_VERSION}-default-lavalink-application.yml"
+    if curl -sf -o /tmp/application.yml "$YML_URL"; then
+        # Preserve custom password if set
+        if [ -f /data/application.yml ]; then
+            CURRENT_PASS="$(grep -oP 'password:\s*\K\S+' /data/application.yml 2>/dev/null || echo "")"
+        fi
+        # Fix address for container use (Red defaults to localhost)
+        sed -i 's/address: localhost/address: 0.0.0.0/' /tmp/application.yml
+        mv /tmp/application.yml /data/application.yml
+        # Restore custom password
+        if [ -n "${CURRENT_PASS:-}" ] && [ "$CURRENT_PASS" != "youshallnotpass" ]; then
+            sed -i "s/password: youshallnotpass/password: ${CURRENT_PASS}/" /data/application.yml
+        fi
+        echo "application.yml updated to Red ${LATEST_RED_VERSION}"
+    else
+        echo "Failed to download application.yml, using existing config"
+    fi
+else
+    echo "Could not check for updates (no network?), using existing config"
+fi
+
+# First run fallback
 if [ ! -f /data/application.yml ]; then
     echo "No application.yml found, copying default..."
     cp /app/defaults/application.yml /data/application.yml
