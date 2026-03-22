@@ -65,10 +65,22 @@ if [ "$INSTALLED_VERSION" != "${REDBOT_VERSION:-latest}" ]; then
     fi
 fi
 
-# --- First run setup ---
-if [ ! -f /data/config.json ]; then
-    echo "First run detected — setting up Red-DiscordBot instance..."
+# --- Ensure instance registry exists ---
+# Red-DiscordBot stores instance registry at $HOME/.config/Red-DiscordBot/config.json
+# This is separate from /data/config.json (instance data config)
+# We must ensure the registry always points to /data for instance "docker"
+REGISTRY_DIR="${HOME}/.config/Red-DiscordBot"
+REGISTRY_FILE="${REGISTRY_DIR}/config.json"
+mkdir -p "$REGISTRY_DIR"
 
+if [ -f /data/config.json ]; then
+    # Existing data — read storage type from existing config
+    EXISTING_STORAGE="$(jq -r '.docker.STORAGE_TYPE // "JSON"' /data/config.json)"
+    echo '{"docker": {"DATA_PATH": "/data", "COG_PATH_APPEND": "cogs", "CORE_PATH_APPEND": "core", "STORAGE_TYPE": "'"$EXISTING_STORAGE"'", "STORAGE_DETAILS": {}}}' | jq . > "$REGISTRY_FILE"
+    echo "Instance registry restored (storage: $EXISTING_STORAGE)"
+else
+    # First run — create instance via redbot-setup
+    echo "First run detected — setting up Red-DiscordBot instance..."
     STORAGE="${STORAGE_TYPE:-json}"
 
     if [ "$STORAGE" = "postgres" ]; then
