@@ -4,7 +4,7 @@
 "aqua:evilmartians/lefthook" = "2.1.4"
 "aqua:google/yamlfmt" = "latest"
 "aqua:jqlang/jq" = "1.8.1"
-"aqua:mikefarah/yq" = "4.52.4"
+"aqua:mikefarah/yq" = "4.52.5"
 "go" = "1.26.1"
 
 [hooks]
